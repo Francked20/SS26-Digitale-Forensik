@@ -31,17 +31,56 @@
   [*Zeit (UTC)*], [*Zeit (CEST)*], [*Ereignis*], [*Beweis*],
   [00:23:42], [02:23:42], [RDP-Verbindung aufgebaut], [Sessions-Tab, Port 3389],
   [00:23:42], [02:23:42], [Benutzername "vogel" erfasst], [RDP-Cookie (Credentials-Tab)],
-  [00:24:35], [02:24:35], [SSH-Verbindung \#1], [Sessions-Tab, Port 22],
-  [00:26:47], [02:26:47], [SSH-Verbindung \#2 (Exfiltration)], [Sessions-Tab, Port 22],
+  [00:24:35], [02:24:35], [SSH-Verbindung \#1(Exfiltration)], [Sessions-Tab, Port 22],
+  [00:26:47], [02:26:47], [SSH-Verbindung \#2], [Sessions-Tab, Port 22],
 )
 
 == Zentrale Befunde
 
+== Zusammenfassung der zentralen Befunde
+
+#table(
+  columns: (auto, auto, 1.5fr, 3fr),
+  inset: 8pt,
+  align: horizon,
+  [*ID*], [*Vektor / Thema*], [*Betroffene Systeme*], [*Kernbefund / Evidenz*],
+  
+  [Finding 1], 
+  [RDP-Angriffsvektor], 
+  [192.168.50.10 (Angreifer) \ -> 192.168.50.30 (Client)], 
+  [TLS-1.2-verschlüsselte RDP-Sitzung. Übertragung von ca. 8 MB Bildschirmdaten. Benutzername "vogel" wurde im RDP-Cookie im Klartext erfasst.],
+  
+  [Finding 2], 
+  [SSH-Credential-Wiederverwendung], 
+  [192.168.50.10 (Angreifer) \ -> 192.168.50.20 (Server)], 
+  [Aufbau von zwei SSH-Sitzungen mit den gestohlenen Zugangsdaten von "vogel". Erste Sitzung dauerte 233s, zweite Sitzung war eine kurze Zweitverbindung (6s) ohne Datenextraktion.],
+  
+  [Finding 3], 
+  [Datenexfiltration], 
+  [192.168.50.20 (Server) \ -> 192.168.50.10 (Angreifer)], 
+  [Exfiltration von ca. 1 MB verschlüsselten Daten innerhalb der ersten SSH-Sitzung. Kontinuierlicher Transfer über ca. 4 Minuten hinweg.],
+  
+  [Finding 4], 
+  [TLS-Zertifikat], 
+  [192.168.50.30 (Client)], 
+  [Extraktion des Zertifikats `DESKTOP-GKDAU52.cer` aus dem RDP-Handshake. Bestätigt unabhängig den Windows-Hostnamen des Opfer-Clients.],
+)
+
 === Finding 1: RDP als Angriffsvektor
+
+#figure(
+  image("../res/Images_M1/RDP_Wireshark.png", width: 90%),
+  caption: [Ausgabe von `RDP in Wireshark durch Port 3389`],
+) <fig-file>
 
 - Der Angreifer (192.168.50.10) verband sich per RDP (Port 3389) mit dem Client.
 - Die Verbindung war TLS-1.2-verschlüsselt.
 - Es wurden ca. 8 MB Bildschirmdaten vom Client zum Angreifer übertragen.
+#figure(
+  image("../res/Images_M1/RDP_IO_Graph.png", width: 90%),
+  caption: [Ausgabe von `Graph zeigt 8MB transferiert werden als RDP`],
+) <fig-file>
+
 - Der Benutzername "vogel" wurde im RDP-Cookie im Klartext erfasst und belegt
   den Diebstahl der Zugangsdaten.
 
@@ -50,10 +89,31 @@
 Der Angreifer nutzte die gestohlenen Zugangsdaten (m.vogel) in Desktop von vogel, um sich per SSH
 am Server anzumelden. Es wurden zwei SSH-Sitzungen aufgebaut:
 
+  #figure(
+  image("../res/Images_M1/SSH_Connection_Proof_NetworkMiner.png", width: 90%),
+  caption: [Ausgabe von `Proof fur 2 SSH Verbindungen`],
+) <fig-file>
+
 + *Erste Sitzung:* OpenSSH 10.2p1 (Kali) → OpenSSH 9.6p1 (Ubuntu Server),
   2026-07-05 00:24:35 UTC, Dauer 233 Sekunden
+  #figure(
+  image("../res/Images_M1/TCP_Stream_SSH1.png", width: 90%),
+  caption: [Ausgabe von `Erste SSH Verbindung`],
+) <fig-file>
+  #figure(
+  image("../res/Images_M1/Exchange_Data_Graph_SSH1.png", width: 90%),
+  caption: [Ausgabe von `Erste SSH Verbindung Graph`],
+) <fig-file>
 + *Zweite Sitzung:* geringes Datenvolumen, 2026-07-05 00:26:47 UTC,
-  Dauer 6 Sekunden
+  Dauer 6 Sekunden (Einschätzung: Hier liegt keine Extraktion vor, sondern lediglich eine kurze Zweitverbindung.)
+    #figure(
+  image("../res/Images_M1/NO_Exfiltration_Proof.png", width: 90%),
+  caption: [Ausgabe von `Zweite SSH Verbindung`],
+) <fig-file>
+   #figure(
+  image("../res/Images_M1/Exchange_Data_Graph_SSH2.png", width: 90%),
+  caption: [Ausgabe von `Zweite SSH Graph`],
+) <fig-file>
 
 === Finding 3: Datenexfiltration
 
@@ -61,6 +121,10 @@ Innerhalb der ersten SSH-Sitzung (OpenSSH 10.2p1 → OpenSSH 9.6p1,
 2026-07-05 00:24:35 UTC, 233 Sekunden):
 
 - ca. 1 MB wurde vom Server zum Angreifer übertragen
+#figure(
+  image("../res/Images_M1/1MB_Exfiltration_Proof.png", width: 90%),
+  caption: [Ausgabe von `Wireshark uber 1MB Daten transferiert werden`],
+) <fig-file>
 - kontinuierlicher Transfer über ca. 4 Minuten
 - der Dateninhalt selbst ist SSH-verschlüsselt, Volumen und Richtung
   belegen jedoch den Diebstahl
@@ -68,7 +132,12 @@ Innerhalb der ersten SSH-Sitzung (OpenSSH 10.2p1 → OpenSSH 9.6p1,
 === Finding 4: Extrahiertes TLS-Zertifikat
 
 Aus dem RDP-TLS-Handshake wurde das Zertifikat `DESKTOP-GKDAU52.cer`
-extrahiert. Es bestätigt den Windows-Hostnamen des Opfer-Clients.
+extrahiert. 
+#figure(
+  image("../res/Images_M1/Cert_RDP_TLS_Handshake.png", width: 90%),
+  caption: [Ausgabe von `Zertifikat von Opfer`],
+) <fig-file>
+Es bestätigt den Windows-Hostnamen des Opfer-Clients.
 
 == Bestätigung der isolierten Umgebung
 
@@ -78,65 +147,10 @@ extrahiert. Es bestätigt den Windows-Hostnamen des Opfer-Clients.
 
 == Fazit
 
-Die aus `silent_quarry.pcap` gewonnenen Beweise rekonstruieren einen
-kompakten, einsitzungsbasierten Angriff auf die Laborumgebung
-192.168.50.0/24. Der Angriff beginnt außerhalb der Sichtbarkeit des
-Netzwerkverkehrs: Der Opfer-Client, bedient durch den Benutzer "vogel",
-führte lokal ein Skript (`main.py`) aus, in das Zugangsdaten eingegeben
-wurden. Da dieser Schritt das Hostsystem nie verlässt, erzeugt er keine
-Pakete und ist im vorliegenden Mitschnitt nicht sichtbar – er wird hier
-aus dem breiteren Fallkontext sowie hostbasierten Beweisen abgeleitet,
-nicht aus dem PCAP selbst.
+Die Analyse von `silent_quarry.pcap` rekonstruiert einen gezielten, kompakten Angriff auf die Laborumgebung (192.168.50.0/24):
 
-Das erste im Mitschnitt sichtbare Artefakt ist eine RDP-Verbindung vom
-Angreifer (192.168.50.10) zum Client (192.168.50.30) um 00:23:42 UTC.
-Obwohl die RDP-Sitzung selbst TLS-1.2-verschlüsselt ist, legt die
-Verbindungsaushandlung – die vor dem Aufbau der Verschlüsselung
-stattfindet – den Benutzernamen "vogel" im Klartext über das
-RDP-Cookie-Feld (`mstshash=vogel`) offen. Dies ist der früheste Punkt im
-Mitschnitt, an dem die Identität des kompromittierten Kontos für einen
-Netzwerkanalysten sichtbar wird, und ermöglichte dem Angreifer, mit
-einem bekannten, gültigen Benutzernamen fortzufahren. Das zugehörige
-TLS-Zertifikat, das von NetworkMiner zweimal innerhalb derselben Sekunde
-extrahiert wurde, bestätigt zusätzlich den Hostnamen des Clients als
-`DESKTOP-GKDAU52` und untermauert damit den Endpunkt der RDP-Sitzung
-unabhängig von DHCP- oder NetBIOS-Daten.
+1. *Initialer Zugriff & RDP-Sitzung (00:23:42 UTC):* Der Angreifer (192.168.50.10) baute eine RDP-Verbindung zum Client (192.168.50.30) auf. Obwohl die Sitzung TLS-verschlüsselt war, legte die unverschlüsselte Verbindungsaushandlung den Benutzernamen "vogel" im Klartext-Cookie (`mstshash=vogel`) offen. Das extrahierte TLS-Zertifikat bestätigte zudem den Hostnamen `DESKTOP-GKDAU52`.
+2. *SSH-Kompromittierung & Exfiltration (00:24:35 UTC):* Unter Verwendung der kompromittierten "vogel"-Zugangsdaten meldete sich der Angreifer per SSH am Server (192.168.50.20) an. Diese erste, 233 Sekunden lange Sitzung trug den gesamten bösartigen Workflow (Authentifizierung, Lokalisierung, Abruf und anschließende Löschung der Zieldatei). Anhand von Paketgrößen, der Flussrichtung und zwei Aktivitätsschüben im I/O-Diagramm lässt sich eine Datenexfiltration von ca. 1 MB vom Server zum Angreifer belegen. 
+3. *Zweitverbindung (00:28:26 UTC):* Eine spätere, nur 6-sekündige SSH-Verbindung diente vermutlich lediglich einer kurzen Wiederverbindung und wies keine Anzeichen weiterer Datenextraktion auf.
 
-Innerhalb von etwa einer Minute nach Beginn der RDP-Sitzung, um 00:24:35
-UTC, öffnete der Angreifer eine SSH-Verbindung zum Server (192.168.50.20)
-unter Verwendung derselben "vogel"-Zugangsdaten, belegt durch
-Versionsbanner-Pakete, die einen OpenSSH-10.2p1-Client (Kali) identifizieren,
-der sich mit einem OpenSSH-9.6p1-Server verbindet. Anstatt Anmeldung und
-Datenübertragung auf getrennte Verbindungen aufzuteilen, scheint diese
-einzelne SSH-Sitzung – mit einer Dauer von 233 Sekunden und einem
-Datenvolumen von rund einem Megabyte, nahezu gleichmäßig in beide
-Richtungen verteilt – den gesamten Workflow nach der Kompromittierung
-getragen zu haben: Authentifizierung, Auffinden der Zugangsdatendatei auf
-dem Server, deren Abruf und anschließende Löschung. Die nahezu
-ausgeglichene Byteverteilung über die Sitzung hinweg ist mit diesem
-gemischten Nutzungsmuster konsistent, im Gegensatz zu dem Erscheinungsbild
-eines rein einseitigen Massentransfers. Obwohl die SSH-Nutzlast selbst
-verschlüsselt bleibt und ihr genauer Inhalt nicht direkt gelesen werden
-kann, markiert ein Cluster größerer Pakete, die etwa in der Mitte der
-Sitzung vom Server zum Angreifer fließen, allein anhand von Paketgröße
-und Richtung den wahrscheinlichen Zeitpunkt des Dateiabrufs. Das
-I/O-Diagramm zeigt zwei getrennte Aktivitätsschübe innerhalb von Stream 2
-(t≈105–140s und t≈230–310s), getrennt durch eine Ruhephase von ca.
-90 Sekunden, was auf mindestens zwei verhaltensmäßig unterschiedliche
-Phasen der Sitzung hindeutet – konsistent mit einem Angreifer, der
-zunächst die Datei lokalisiert und später zurückkehrt, um sie
-abzurufen und zu löschen. Eine zweite, deutlich kürzere SSH-Verbindung
-folgte vier Minuten später, um 00:28:26 UTC, mit einer Dauer von nur
-sechs Sekunden; ihre Kürze und der ausgeglichene Datenverkehr legen eine
-beiläufige Wiederverbindung nahe, nicht einen zweiten gezielten
-Exfiltrationskanal.
-
-Insgesamt stützt der Mitschnitt eine klare und in sich konsistente
-Erzählung – Offenlegung von Zugangsdaten per RDP, gefolgt von
-SSH-basiertem Datendiebstahl – und veranschaulicht zugleich die
-inhärenten Grenzen netzwerkbasierter Beweise: Die initiale lokale
-Kompromittierung, die genaue Identität der abgerufenen Datei sowie die
-konkret ausgeführten Befehle liegen allesamt außerhalb dessen, was ein
-reiner Paketmitschnitt belegen kann, und müssten durch Host- oder
-Arbeitsspeicherforensik von Client- und Server-Disk-/RAM-Images ergänzt
-werden, um das Gesamtbild zu vervollständigen.
+*Limitation der Netzanalyse:* Während der Paketmitschnitt den Diebstahl der Zugangsdaten und die anschließende Datenexfiltration zweifelsfrei belegt, bleiben die initiale lokale Infektion (Ausführung von `main.py`) sowie die konkret ausgeführten SSH-Befehle im PCAP unsichtbar. Zur lückenlosen Aufklärung sollte diese Netzwerkanalyse durch Host- und Arbeitsspeicherforensik der betroffenen Endpunkte ergänzt werden.
