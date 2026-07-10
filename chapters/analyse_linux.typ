@@ -87,9 +87,9 @@ Ein erster Blick mit dem Befehl `file` auf das Abbild lieferte eine irreführend
 #figure(
   image("../res/Images_M2/file_server_dd.png", width: 90%),
   caption: [Ausgabe von `file Server.dd`],
-) <fig-file>
+) <fig-file-server>
 
-Wie in @fig-file ersichtlich, erkennt das Tool lediglich den sogenannten Protective MBR, der bei GPT-partitionierten Datenträgern aus Kompatibilitätsgründen im ersten Sektor abgelegt wird, und interpretiert diesen fälschlicherweise als klassischen MBR-Bootsektor ("DOS/MBR boot sector, extended partition table (last)").
+Wie in @fig-file-server ersichtlich, erkennt das Tool lediglich den sogenannten Protective MBR, der bei GPT-partitionierten Datenträgern aus Kompatibilitätsgründen im ersten Sektor abgelegt wird, und interpretiert diesen fälschlicherweise als klassischen MBR-Bootsektor ("DOS/MBR boot sector, extended partition table (last)").
 
 Die tatsächliche Partitionsstruktur wurde daraufhin mit `fdisk -l` und `mmls` verifiziert:
 
@@ -168,6 +168,8 @@ Erst danach konnte das logische Volume schreibgeschützt eingebunden werden:
 ) <fig-mount>
 
 Die tatsächliche Vorgehensweise zum Einbinden des Abbildes weicht damit von einem einfachen `mount -o loop,ro` ab, da die GPT-Partitionierung sowie die LVM-Struktur des Servers eine mehrstufige Vorbereitung (Loop-Device, LVM-Import, Volume-Aktivierung) erforderten.
+
+= Findings
 
 == Auswertung von Logdateien und Bash-History (`Server.dd`)
 
@@ -429,9 +431,11 @@ Der in der Bash-History der Session svc dokumentierte Netzwerkmitschnitt *`silen
 
 Dies erklärt, wie der Angreifer überhaupt in den Besitz der für den anschließenden SSH-Zugriff verwendeten Zugangsdaten gelangte, und schließt die auf Asservat 01/03 beschränkte Beweiskette lückenlos an die vorgelagerte Angriffsphase auf dem Client an.
 
-Die im Netzwerkmitschnitt rekonstruierten SSH-Verbindungszeitpunkte *(00:24:35 UTC und 00:26:47 UTC)* liegen jeweils rund sechs Sekunden vor den in `auth.log` protokollierten Anmeldezeitpunkten *(00:24:41 UTC und 00:26:53 UTC, B003-SERVER-SQ-2026)* – erwartungsgemäß, da der TCP-Verbindungsaufbau der Authentifizierung vorausgeht. Die Netzwerkforensik ordnet der ersten, *233 Sekunden* dauernden Sitzung anhand des Datenvolumens (~1 MB, mit einem erkennbaren Übertragungsschub in der Sitzungsmitte) die eigentliche Dateizugriffs- und Exfiltrationsaktivität zu, während die zweite, nur sechs Sekunden dauernde Sitzung als kurze Wiederverbindung mit geringem Datenvolumen eingeordnet wird. Dies deckt sich mit den serverseitigen Befunden: 
+Die im Netzwerkmitschnitt rekonstruierten SSH-Verbindungszeitpunkte *(00:24:35 UTC und 00:26:47 UTC)* liegen jeweils rund sechs Sekunden vor den in `auth.log` protokollierten Anmeldezeitpunkten *(00:24:41 UTC und 00:26:53 UTC, B003-SERVER-SQ-2026)* – erwartungsgemäß, da der TCP-Verbindungsaufbau der Authentifizierung vorausgeht. 
 
-Die erste Sitzung umfasst gemäß Bash-History die Löschung von Projekte und Kunden sowie die Zeitstempel-Manipulation von Verwaltung, während die zweite Sitzung im Wesentlichen die erneute Löschung von Projekte sowie die Verifikation der Timestomping-Manipulation an *kunden_2026.csv* mittels `touch`/`stat` umfasst *(B004-RAM-SQ-2026, B006-RAM-SQ-2026)*
+Die Netzwerkforensik ordnet der ersten, *233 Sekunden* dauernden Sitzung anhand des Datenvolumens (*~1 MB*, mit einem erkennbaren Übertragungsschub in der Sitzungsmitte) die eigentliche Dateizugriffs- und Exfiltrationsaktivität zu, während die zweite, nur sechs Sekunden dauernde Sitzung als kurze Wiederverbindung mit geringem Datenvolumen eingeordnet wird. Dies deckt sich mit den serverseitigen Befunden: 
+
+Die erste Sitzung umfasst gemäß *Bash-History* die Löschung von *Projekte* und *Kunden* sowie die Zeitstempel-Manipulation von *Verwaltung*, während die zweite Sitzung im Wesentlichen die erneute Löschung von *Projekte* sowie die Verifikation der Timestomping-Manipulation an *kunden_2026.csv* mittels `touch`/`stat` umfasst *(B004-RAM-SQ-2026, B006-RAM-SQ-2026)*
 – die zweite Sitzung stellt somit überwiegend Aufräum- und Verschleierungsaktivität dar, keinen eigenständigen zweiten Exfiltrationskanal.
 
 Die Netzwerkforensik bestätigt zudem die Isolation der Laborumgebung für den auf Interface `ens37` erfassten Verkehr (kein DNS-Verkehr, keine externen IP-Adressen). Das servereigene, mit dem Internet verbundene zweite Interface (`ens33`, vgl. Netplan-Konfiguration) betrifft ausschließlich die Vorbereitungs- und Sicherungsaktivität der Session svc und liegt außerhalb des von Mitglied 1 erfassten Zeitfensters.
