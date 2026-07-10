@@ -37,7 +37,7 @@
 
 == Zentrale Befunde
 
-== Zusammenfassung der zentralen Befunde
+=== Zusammenfassung der zentralen Befunde
 
 #table(
   columns: (auto, auto, 1.5fr, 3fr),
