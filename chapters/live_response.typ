@@ -28,7 +28,7 @@ im Hintergrund und wurde nach Abschluss der Angriffskette mit
   [Dropped Pakete], [0],
   [Dateigröße], [~8.82 MB],
   [Erfassungsdauer], [ca. 5 Minuten],
-  [SHA256-Hash], [`be90bf4ef239aead9675acb509d2262d30b540142db01d9e91e56d1f578871d4`],
+  [SHA256-Hash], [be90bf4ef239aead9675acb509d2262d30b540142db01d9e91e56d1f578871d4],
 )
 
 Die PCAP-Datei stellt das primäre Asservat für die Netzwerk-
@@ -72,7 +72,7 @@ ls -la /tmp/server_ram.lime
   [Format], [LiME format],
   [Dateigröße], [~4 GB],
   [Erfassungszeitpunkt], [05.07.2026, 03:08 UTC+2],
-  [SHA256-Hash], ["f0d1a5045e849bafd42545b3083af698b1462b555715b1a92805e9209d565dfd"],
+  [SHA256-Hash], [f0d1a5045e849bafd42545b3083af698b1462b555715b1a92805e9209d565dfd],
 )
 
 === 12.2.2 Client (VM3) — winpmem
@@ -113,7 +113,7 @@ dir client_ram.mem
   [Format], [Raw memory dump],
   [Dateigröße], [~ 2,7 GB (entspricht VM3-RAM)],
   [Erfassungszeitpunkt], [05.07.2026, ca. 08:30 UTC+8],
-  [SHA256-Hash], ["b26723fa8dba5f567500eb9cda5c8b048a84a74986bf6978c3c0644688b665d1"],
+  [SHA256-Hash], [b26723fa8dba5f567500eb9cda5c8b048a84a74986bf6978c3c0644688b665d1],
 )
 
 Der dokumentierte Werkzeugwechsel folgt dem forensischen Prinzip 
@@ -165,7 +165,7 @@ cd %USERPROFILE%
   [Dateigröße], [103.098 Bytes (ca. 100 KB)],
   [Erfassungszeitpunkt], [05.07.2026, 08:44 UTC+8],
   [Format], [Plain Text (ASCII)],
-  [SHA256-Hash], ["c7869c107f378cd100beab26569f1f75d4ffe2669e5254f115a79c52e1f9791c"],
+  [SHA256-Hash], [c7869c107f378cd100beab26569f1f75d4ffe2669e5254f115a79c52e1f9791c],
 )
 
 *Netzwerkrelevante Auszüge aus der Live-Response:*
@@ -271,17 +271,45 @@ Die gesammelten Artefakte wurden über die Velociraptor GUI als
 ZIP-Archive exportiert und als Asservate gesichert.
 
 #table(
-  columns: 3,
-  stroke: 0.5pt,
-  [*Dateiname*], [*Größe*], [*Inhalt*], [*SHA256*]
-  [`N.F.D94RB8REBGE2E-C.14943fad2f2b3c8b-20260705015252Z.zip`],
+  columns: (2fr, 0.8fr, 2.2fr, 3fr),
+  inset: 8pt,
+  align: (col, row) => (
+    if row == 0 { center + horizon }
+    else if col == 1 { center + horizon }
+    else { left + horizon }
+  ),
+  stroke: (x, y) => if y == 0 { (bottom: 1.5pt + rgb("#262626")) } else if y == 1 { none } else { (top: 0.5pt + rgb("#e5e5e5")) },
+  fill: (col, row) => if row == 0 { rgb("#f4f4f5") } else if calc.even(row) { rgb("#fafafa") } else { none },
+  
+  [*Dateiname*], [*Größe*], [*Inhalt*], [*SHA256*],
+  
+  // Row 1
+  [
+    #set text(size: 8pt)
+    `N.F.D94RB8REBGE2E-` \
+    `C.14943fad2f2b3c8b-` \
+    `20260705015252Z.zip`
+  ],
   [52.9 KB],
   [Hauptsammlung (Amcache, Registry, LNK, JumpLists, MFT, Event Logs)],
-  [c81a9ab81b0523001d4f39e16d8e5b61f48522cd15dd1b9e32192d5c0147e774],
-  [`N.F.D94RFIU57M5PG-C.14943fad2f2b3c8b-20260705015307Z.zip`],
+  [
+    #set text(size: 7pt)
+    #block(width: 100%)[c81a9ab81b0523001d4f39e16d8e5b61f48522cd15dd1b9e32192d5c0147e774]
+  ],
+  
+  // Row 2
+  [
+    #set text(size: 8pt)
+    `N.F.D94RFIU57M5PG-` \
+    `C.14943fad2f2b3c8b-` \
+    `20260705015307Z.zip`
+  ],
   [4.1 KB],
   [Nachträgliche Prefetch-Erfassung],
-  [4aff14247bdd902d93eeb15d41fa23708aff2ad6cae50b6def864b3f44bed354],
+  [
+    #set text(size: 7pt)
+    #block(width: 100%)[4aff14247bdd902d93eeb15d41fa23708aff2ad6cae50b6def864b3f44bed354]
+  ],
 )
 
 #figure(
