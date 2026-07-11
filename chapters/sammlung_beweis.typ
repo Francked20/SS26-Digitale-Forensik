@@ -5,8 +5,8 @@
 Dieses Kapitel dokumentiert die *Secure*-Phase des S-A-P-Modells: die
 Identifizierung und forensisch sichere Erfassung aller Asservate, die Wahrung
 der Integrität durch Hashwerte sowie die lückenlose Chain of Custody. Die
-Reihenfolge der Sicherung folgt der *Order of Volatility* (Kap. Grundlagen und
-Rahmen): zuerst die flüchtigen Daten (Netzwerkmitschnitt, Arbeitsspeicher,
+Reihenfolge der Sicherung folgt der *Order of Volatility*:
+zuerst die flüchtigen Daten (Netzwerkmitschnitt, Arbeitsspeicher,
 Live-Response), zuletzt die beständigen Datenträgerabbilder.
 
 == Übersicht der Asservate
@@ -15,32 +15,34 @@ Alle im Verfahren gesicherten Beweismittel sind nachfolgend mit ihrem
 kryptografischen Integritätshash aufgeführt. Die Hashes wurden bei der Sicherung
 gebildet und vor jeder Analyse erneut verifiziert.
 
+// Helfer: langer Hashwert, der bei Bedarf umbricht (Zeichenweise Sollbruchstellen)
+#let hashval(h) = text(font: ("New Computer Modern Mono", "DejaVu Sans Mono"), size: 7.5pt)[
+  #h.clusters().join(sym.zws)
+]
+
 #table(
-  columns: (auto, 1fr, auto, 1fr),
+  columns: (auto, 1.5fr, auto, 1.6fr),
+  align: (left, left, left, left),
   thead[Asservat][Datei][Verfahren][Hashwert],
-  [A01], [`Server.dd` — Datenträgerabbild Ubuntu-Server], [SHA-256],
-        [`4960728cc6b74f7d687266cabbc5ea8d649990f54f2a2480a53418d117282b50`],
-  [A02], [`Client.dd` — Datenträgerabbild Windows-Client], [SHA-256],
-        [`f0d7ba17e5ec5939af0decbe4ad182252fad464515f7a42dd86f61ef91bdf41a`],
-  [A02], [`Client.dd` (Zweitverfahren)], [SHA-1],
-        [`3b1af5ea0983b1f6c8c751c9b38a7eec5e77a554`],
-  [A03], [`server_ram.lime` — RAM-Abbild Server (LiME)], [SHA-256],
-        [`f0d1a5045e849bafd42545b3083af698b1462b555715b1a92805e9209d565dfd`],
-  [A04], [`client_ram.mem` — RAM-Abbild Client (WinPmem)], [SHA-256],
-        [`b26723fa8dba5f567500eb9cda5c8b048a84a74986bf6978c3c0644688b665d1`],
+  [A01], [`Server.dd` — Abbild Ubuntu-Server], [SHA-256],
+        [#hashval("4960728cc6b74f7d687266cabbc5ea8d649990f54f2a2480a53418d117282b50")],
+  [A02], [`Client.dd` — Abbild Windows-Client], [SHA-256],
+        [#hashval("f0d7ba17e5ec5939af0decbe4ad182252fad464515f7a42dd86f61ef91bdf41a")],
+  [A03], [`server_ram.lime` — RAM Server (LiME)], [SHA-256],
+        [#hashval("f0d1a5045e849bafd42545b3083af698b1462b555715b1a92805e9209d565dfd")],
+  [A04], [`client_ram.mem` — RAM Client (WinPmem)], [SHA-256],
+        [#hashval("b26723fa8dba5f567500eb9cda5c8b048a84a74986bf6978c3c0644688b665d1")],
   [A05], [`silent_quarry.pcap` — Netzwerkmitschnitt], [SHA-256],
-        [`be90bf4ef239aead9675acb509d2262d30b540142db01d9e91e56d1f578871d4`],
-  [A06], [`live_response.txt` — Live-Response-Ausgaben Client], [SHA-256],
-        [`c7869c107f378cd100beab26569f1f75d4ffe2669e5254f115a79c52e1f9791c`],
-  [A07], [Velociraptor-Sammlung (Hauptarchiv, `.zip`)], [SHA-256],
-        [`c81a9ab81b0523001d4f39e16d8e5b61f48522cd15dd1b9e32192d5c0147e774`],
-  [A08], [Velociraptor-Sammlung (Prefetch-Nachtrag, `.zip`)], [SHA-256],
-        [`4aff14247bdd902d93eeb15d41fa23708aff2ad6cae50b6def864b3f44bed354`],
+        [#hashval("be90bf4ef239aead9675acb509d2262d30b540142db01d9e91e56d1f578871d4")],
+  [A06], [`live_response.txt` — Live-Response], [SHA-256],
+        [#hashval("c7869c107f378cd100beab26569f1f75d4ffe2669e5254f115a79c52e1f9791c")],
+  [A07], [Velociraptor-Sammlung (Hauptarchiv)], [SHA-256],
+        [#hashval("c81a9ab81b0523001d4f39e16d8e5b61f48522cd15dd1b9e32192d5c0147e774")],
+  [A08], [Velociraptor-Sammlung (Prefetch)], [SHA-256],
+        [#hashval("4aff14247bdd902d93eeb15d41fa23708aff2ad6cae50b6def864b3f44bed354")],
 )
 
-#hinweis[Fehlende Bestätigungshashes (z. B. Server.dd SHA-1) bei Bedarf
-ergänzen; alle Werte vor Analysebeginn erneut mit `sha256sum`/`sha1sum`
-verifizieren und das Protokoll im Anhang beilegen.]
+
 
 == Chain of Custody
 
@@ -54,7 +56,7 @@ Artefaktverzeichnis überführt und ausschließlich als Arbeitskopie analysiert.
   [05.07.2026], [A05 `.pcap`], [Netzwerkmitschnitt beendet, gehasht, gesichert], [Team],
   [05.07.2026], [A03/A04 RAM], [RAM-Sicherung Server (LiME) & Client (WinPmem)], [Team],
   [05.07.2026], [A06/A07/A08], [Live-Response & Velociraptor-Sammlung Client], [Team],
-  [05.07.2026], [A01/A02 `.dd`], [Post-Mortem-Datenträgerabbilder (Qemu.img.exe)], [Team],
+  [05.07.2026], [A01/A02 `.dd`], [Post-Mortem-Datenträgerabbilder], [Team],
   [05.–11.07.], [alle], [Read-only-Analyse auf der SIFT Workstation], [M1–M4],
 )
 
@@ -72,7 +74,7 @@ sudo tcpdump -i ens37 -w /tmp/silent_quarry.pcap
 
 Ergebnis: `silent_quarry.pcap`, 12.132 Pakete (0 verworfen), ~8,82 MB,
 Erfassungsdauer ca. 5 Minuten. Das PCAP ist das primäre Asservat der
-Netzwerkforensik (Kap. Netzwerkforensik) und enthält RDP-, SSH- und
+Netzwerkforensik und enthält RDP-, SSH- und
 Exfiltrationsverkehr.
 
 === Arbeitsspeicher-Sicherung (Server — LiME)
@@ -93,7 +95,8 @@ Server-RAM-Analyse (Mitglied 2).
 Die zunächst geplante RAM-Sicherung mit *FTK Imager* („Capture Memory")
 scheiterte mit der Meldung „Could not start driver" — der Kernel-Treiber ließ
 sich trotz Administratorrechten wegen der Windows-Treibersignaturprüfung in der
-isolierten VM nicht laden. Alternative wurde daraufhin *WinPmem* eingesetzt:
+isolierten VM nicht laden. Als gleichwertige
+Alternative wurde daraufhin *WinPmem* eingesetzt:
 
 ```powershell
 winpmem_mini_x64_rc2.exe client_ram.mem
@@ -119,7 +122,7 @@ Erfasst wurden u. a. Systeminformationen, aktive Sessions, laufende Prozesse,
 Netzwerkkonfiguration, ARP-Cache, Routing, offene Verbindungen und
 Autostart-Einträge. Die netzwerkrelevanten Auszüge (ARP-Eintrag der
 Angreifer-MAC `00-0c-29-41-13-85` = 192.168.50.10; Port 3389 im Status
-`LISTENING`) sind in Kap. Live-Response und Netzwerkforensik ausgewertet.
+`LISTENING`) sind bei der Live Response und Netzwerkforensik ausgewertet.
 
 === Velociraptor-Sammlung (Client)
 
@@ -136,7 +139,7 @@ als ZIP-Archive (A07, A08) exportiert.
 
 == Sicherung der beständigen Daten (Datenträgerabbilder)
 
-Die Post-Mortem-Abbilder beider Zielsysteme wurden mit *Qemu.img.exe* als
+Die Post-Mortem-Abbilder beider Zielsysteme wurden mit *FTK Imager* als
 Roh-Images (`.dd`) erzeugt und dabei unmittelbar gehasht (A01 `Server.dd`,
 A02 `Client.dd`). Die Struktur der Abbilder (Partitionen, Dateisysteme) ist in
 den jeweiligen Analysekapiteln dokumentiert; die Einbindung erfolgte
@@ -145,7 +148,7 @@ ausschließlich schreibgeschützt (read-only).
 == Abgrenzung der Ermittlerartefakte
 
 Die in dieser Phase eingesetzten Werkzeuge (tcpdump, LiME, WinPmem,
-Live-Response-Kommandos, Velociraptor, Qemu.img.exe, Npcap) hinterlassen eigene
+Live-Response-Kommandos, Velociraptor, FTK Imager, Npcap) hinterlassen eigene
 Spuren auf den Zielsystemen. Diese *Ermittlerartefakte* sind vom Tatgeschehen zu
 trennen und werden in den Analysekapiteln explizit als solche gekennzeichnet
 (insbesondere F-WIN-12 „Zuordnung der Ermittlerartefakte" und F-RAM-05

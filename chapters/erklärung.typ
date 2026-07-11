@@ -1,6 +1,6 @@
 #import "../style/style.typ": hinweis
 
-= Eidesstattliche Erklärung
+#heading("Eidesstattliche Erklärung", outlined: false, numbering: none)
 
 Hiermit versichern wir, dass wir die vorliegende Projektarbeit selbstständig
 und ohne unerlaubte Hilfe angefertigt haben. Alle Stellen, die dem Wortlaut

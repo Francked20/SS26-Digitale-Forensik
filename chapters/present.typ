@@ -1,6 +1,6 @@
 #import "../style/style.typ": thead, hinweis
 
-= Korrelierte Gesamtbetrachtung und Schlussfolgerung
+= Korrelierte Gesamtbetrachtung und Schlussfolgerung 
 
 Dieses Kapitel führt die Einzelbefunde der vier Forensikbereiche zu einer
 konsistenten Gesamtdarstellung zusammen (Present-Phase). Es zeigt, wie sich die
@@ -28,9 +28,9 @@ belegende Quelle und — wo vorhanden — die zugehörige Finding- bzw. Beweis-I
     (Thunderbird)], [F-WIN-01],
   [02.07.2026], [Entpacken von `App.zip`, Zugriff auf `main.py`/`login_check.py`],
     [F-WIN-02, F-WIN-04],
-  [02.07.2026], [Ausführung des Python-Schadcodes; gefälschtes
-    „Windows Sicherheit"-Fenster], [F-WIN-03, F-WIN-05],
-  [02.07.2026], [Abgriff der Windows-Anmeldedaten `vogel/admin`, zweifach in
+  [04.–05.07.2026], [Ausführung des Python-Schadcodes (`python.exe`); gefälschtes
+    „Windows Sicherheit"-Fenster (BAM 05.07. 00:22:55Z)], [F-WIN-03, F-WIN-05],
+  [04.–05.07.2026], [Abgriff der Windows-Anmeldedaten `vogel/admin`, zweifach in
     `pwlog.txt`], [F-WIN-06],
   [05.07.2026 00:23:42], [RDP-Verbindung Angreifer → Client; `mstshash=vogel`
     im Klartext], [Netzwerk-Finding 1],
@@ -52,9 +52,7 @@ belegende Quelle und — wo vorhanden — die zugehörige Finding- bzw. Beweis-I
     Velociraptor) — Ermittlerartefakte], [F-WIN-12, F-RAM-05],
 )
 
-#hinweis[Optional: grafische Timeline als Abbildung ergänzen
-(`res/present/timeline.png`), erzeugt z. B. mit plaso/log2timeline über alle
-Quellen.]
+
 
 == Korroboration über die Bereiche
 
@@ -68,7 +66,7 @@ unabhängiger Artefaktquellen:
   (Netzwerk) korrespondiert mit `pwlog.txt` des Stealers (F-WIN-06) und dem
   Prozessnachweis im RAM (F-RAM-03).
 - *Serverzugriff:* Die auf dem Client offen liegenden Serverzugangsdaten
-  `m.vogel:Werkzeug#2026` (F-WIN-06) erklären die beiden SSH-Logins im
+  *`m.vogel:Werkzeug#2026`* (F-WIN-06) erklären die beiden SSH-Logins im
   `auth.log` (B003) und im PCAP (Netzwerk-Finding 2).
 - *Löschung & Anti-Forensik:* Die Löschbefehle und das Timestomping aus der
   `bash_history` (B004/B005) decken sich mit den leeren Projektverzeichnissen und
@@ -88,10 +86,12 @@ des Python-Credential-Stealers → RDP-Zugriff auf den Client → Auslesen der o
 abgelegten Serverzugangsdaten → SSH-Login am Projektserver → Exfiltration per SSH.
 
 *3. Von welchem System aus und zu welchem Zeitpunkt?* \
-Vom Angreifer-Host `192.168.50.10` (Kali). Der RDP-Zugriff auf den Client begann
-am 05.07.2026 um 00:23:42 UTC, der erste SSH-Login am Server um 00:24:35 UTC. Die
-initiale Kompromittierung des Clients (Phishing/Ausführung) erfolgte bereits am
-02.07.2026.
+Vom Angreifer-Host `192.168.50.10`. Der RDP-Zugriff auf den Client begann
+am 05.07.2026 um 00:23:42 UTC, der erste SSH-Login am Server um 00:24:35 UTC. Der
+initiale Zugang (Eingang der Phishing-Mail, Entpacken von `App.zip`) erfolgte
+bereits am 02.07.2026; die Ausführung des Credential-Stealers und der Abgriff der
+Windows-Anmeldedaten sind artefaktseitig auf den 04.–05.07.2026 datiert
+(BAM 05.07. 00:22:55Z, F-WIN-05) — also unmittelbar vor dem RDP-Zugriff.
 
 *4. Wurden Daten gelöscht oder manipuliert? Sind sie wiederherstellbar?* \
 Ja. Der Angreifer löschte die Projektdaten (`rm -rf`). Eine vollständige
@@ -115,7 +115,7 @@ Passwort-Managers statt Klartextablage, Einschränkung von Administratorrechten
 mit Passwortpflicht, sowie zentrale Protokollierung und Monitoring. Der Vorfall
 sollte dem BSI gemeldet werden; auf Lösegeldforderungen ist nicht einzugehen.
 
-*Grenzen der Untersuchung.* Der Server-RAM stand nur eingeschränkt zur Verfügung;
+*Grenzen der Untersuchung:* Der Server-RAM stand nur eingeschränkt zur Verfügung;
 zwei Volatility-Module (svcscan, hashdump) waren wegen der Windows-10-Speicher-
 komprimierung nicht auswertbar (F-RAM-06). Der konkrete Dateiinhalt der
 SSH-Exfiltration ist verschlüsselt und damit inhaltlich nicht rekonstruierbar —

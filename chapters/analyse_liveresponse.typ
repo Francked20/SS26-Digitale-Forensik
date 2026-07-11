@@ -1,10 +1,12 @@
 // ============================================================
-//  live_response.typ — Kapitel 5.x
+//  analyse_liveresponse.typ — Analyse-Phase (Mitglied 3)
 //  Live-Response-Analyse des Windows-Clients (live_response.txt)
+//  (ehem. live_res.typ)
 // ============================================================
 //  Bildablage:   ../res/lr/<Dateiname>.png
 //  Quelldatei:   Artefaktverzeichnis (Nextcloud, Anhang),
 //                cases/silent_quarry/live_response.txt
+//  Sicherung:    siehe Kapitel „Sicherung der Beweismittel — Durchführung"
 // ============================================================
 
 #import "../style/style.typ": finding, hinweis, thead, accent
@@ -34,31 +36,37 @@
   #text(weight: "bold")[Quelldatei:] #raw(pfad) #text(style: "italic")[(siehe Artefaktverzeichnis, Anhang)]
 ]
 
-#let quelle(pfad) = text(size: 9pt, fill: gray.darken(15%))[
-  #text(weight: "bold")[Quelldatei:] #raw(pfad) #text(style: "italic")[(siehe Artefaktverzeichnis, Anhang)]
-]
+= Live-Response-Analyse des Windows-Clients <kap-liveresponse>
 
-= Live-Response-Analyse des Windows-Clients
-
-Neben der Post-Mortem-Auswertung (Kap. 5.3) und der Speicheranalyse (Kap. 5.4) wurde
-am laufenden System eine *Live-Response* durchgeführt und mittels Velociraptor
-gesichert. Die Vorlesung ordnet die Live-Response der „Order of Volatility“ zu: sie
-erfasst flüchtige Zustandsdaten (laufende Prozesse, Netzwerkverbindungen,
-ARP-Cache, angemeldete Benutzer), die nach einem Neustart verloren gehen. Die
-Ergebnisse liegen in `live_response.txt` vor und umfassen `systeminfo`, `tasklist /v`,
+Neben der Post-Mortem-Auswertung (Kapitel Windows-Forensik) und der
+Speicheranalyse (Kapitel Speicherforensik) wurde am laufenden System eine
+*Live-Response* durchgeführt und mittels *Velociraptor* bzw. verketteter
+Windows-Kommandos gesichert (siehe Kapitel „Sicherung der Beweismittel —
+Durchführung"). Die Vorlesung ordnet die Live-Response der *Order of
+Volatility* zu: Sie erfasst flüchtige Zustandsdaten (laufende Prozesse,
+Netzwerkverbindungen, ARP-Cache, angemeldete Benutzer), die nach einem
+Neustart unwiederbringlich verloren gehen. Die Ergebnisse liegen in
+`live_response.txt` vor und umfassen `systeminfo`, `tasklist /v`,
 `ipconfig /all`, `netstat`, `route`, `arp -a` sowie `schtasks`.
 
-Da die Live-Response am 05.07.2026 im Rahmen der Akquise durch das Ermittlungsteam
-erstellt wurde, bildet sie den Systemzustand während der Sicherung ab. Einige Einträge
-(u. a. der eigene `tasklist`-Aufruf) sind entsprechend als Ermittlerartefakte zu werten.
+Methodische Einordnung: Die Live-Response ist eine *Triage-Momentaufnahme* des
+laufenden Systems. Ihre Befunde *bestätigen* die maßgeblichen Post-Mortem- und
+Speicherbefunde über unabhängige Zweit- und Drittquellen; sie ersetzen die
+Auswertung am integritätsgesicherten Abbild `Client.dd` nicht. Ein Befund —
+der dynamische ARP-Eintrag (F-LR-02) — ist darüber hinaus *eigenständig* und
+nur live erfassbar.
+
+Da die Live-Response am 05.07.2026 im Rahmen der Akquise durch das
+Ermittlungsteam erstellt wurde, bildet sie den Systemzustand während der
+Sicherung ab. Einige Einträge (u. a. der eigene `tasklist`-Aufruf) sind
+entsprechend als Ermittlerartefakte zu werten.
 
 #quelle("live_response.txt")
 
 == Systeminformationen (systeminfo)
 
 #finding("F-LR-01", "Systemzustand und Bestätigung der Systemparameter")[
-  #befehl("# via Velociraptor Live-Response gesammelt:
-systeminfo")
+  
 
   #beweis("sysinfo.png", [`systeminfo`: Host DESKTOP-GKDAU52, Windows 10 Education, Zeitzone UTC+08:00, Boot Time 05.07. 08:19:36.], aktiv: true)
 
@@ -76,7 +84,7 @@ systeminfo")
   Ortszeit = 00:19 UTC) deckt sich mit dem SystemTime des RAM-Abbilds (F-RAM-01).
 
   *Korrelation.* Stützt F-WIN-00 (Systemidentifikation) und die Zeitzonen-Konvention des
-  gesamten Gutachtens. Die VMware-Umgebung bestätigt die Infrastruktur (Kap. 3).
+  gesamten Gutachtens. Die VMware-Umgebung bestätigt die Infrastruktur.
 
   #quelle("live_response.txt")
 ]
@@ -108,7 +116,7 @@ arp -a")
   vor).
 
   *Korrelation.* Die Interpretation des Angreifer-Datenverkehrs erfolgt in der
-  Netzwerkforensik (Kap. 5.1, Mitglied 1); der ARP-Eintrag ist der clientseitige
+  Netzwerkforensik; der ARP-Eintrag ist der clientseitige
   Beleg des Kontakts. Ergänzt F-RAM-02 (keine aktive Exfiltrationsverbindung zum
   Sicherungszeitpunkt).
 
@@ -124,7 +132,7 @@ schtasks /query /fo LIST /v")
   #beweis("task.png", [`tasklist /v` und `schtasks`: legitime Prozesse/Aufgaben, `npcapwatchdog` als Ermittlerartefakt, kein `SecurityUpdater`.], aktiv: true)
 
   *Was.* `tasklist /v` zeigt u. a. `cmd.exe` (PID 3952, Fenstertitel „Administrator:
-  Command Prompt - tasklist /v“) und `tasklist.exe` (PID 7144) unter dem Konto
+  Command Prompt - tasklist /v") und `tasklist.exe` (PID 7144) unter dem Konto
   `DESKTOP-GKDAU52\vogel` — der Erfassungsvorgang selbst. Ein `python.exe`-Prozess ist
   nicht vorhanden. `schtasks` listet ausschließlich legitime Aufgaben (MicrosoftEdgeUpdate,
   OneDrive, Mozilla Firefox) sowie *`\npcapwatchdog`* auf. Ein Eintrag `SecurityUpdater`
@@ -151,5 +159,13 @@ den Angreifer-Host 192.168.50.10* (F-LR-02), der einen tatsächlichen Netzwerkko
 zwischen Client und Kali-System belegt. Ergänzend bestätigt sie die Systemparameter
 und die Zeitzone UTC+8 (F-LR-01) sowie das Fehlen eines laufenden Schadprozesses und
 eines Persistenzmechanismus (F-LR-03). Der eigene Erfassungsvorgang (`tasklist` unter
-`vogel`, `npcapwatchdog`) ist als Ermittlerartefakt gekennzeichnet. Die Interpretation
-des zugrunde liegenden Netzwerkverkehrs erfolgt in der Netzwerkforensik (Kap. 5.1).
+`vogel`, `npcapwatchdog`) ist als Ermittlerartefakt gekennzeichnet.
+
+Über die reine Live-Response hinaus wurden dieselben Windows-Artefaktklassen im Rahmen
+der Sicherung auch per *Velociraptor* erfasst (siehe Sicherungskapitel). Diese Sammlung
+diente der Triage und als korroborierende Zweitquelle; die maßgebliche Auswertung
+erfolgte post-mortem am Abbild `Client.dd`. So ist etwa die Ausführung des Schadcodes
+`PYTHON.EXE` sowohl in den live erfassten als auch in den aus dem Abbild extrahierten
+Prefetch-Daten inhaltlich deckungsgleich belegt — eine Doppelquellen-Bestätigung des
+zentralen Befunds. Die Interpretation des zugrunde liegenden Netzwerkverkehrs erfolgt
+in der Netzwerkforensik.

@@ -38,7 +38,7 @@
   #text(weight: "bold")[Quelldatei:] #raw(pfad) #text(style: "italic")[(siehe Artefaktverzeichnis, Anhang)]
 ]
 
-= Windows-Betriebssystem- und Anwendungsforensik
+= Windows-Betriebssystem- und Anwendungsforensik <kap-windows>
 #text(style: "italic", fill: gray.darken(20%))[Bearbeiter: Mitglied 3]
 
 Gegenstand dieses Abschnitts ist die post-mortem-Auswertung des Datenträgerabbilds
@@ -53,10 +53,8 @@ Zugangsdaten sowie die Prüfung etwaiger Persistenz- und Anti-Forensik-Maßnahme
 Jedes Finding ist so aufgebaut, dass es *reproduzierbar* ist: Es nennt den exakten
 ausgeführten Befehl, den zugehörigen Beweis-Screenshot sowie die Fundstelle der
 Quelldatei im Artefaktverzeichnis. Damit ist für jeden Befund nachvollziehbar, *was*
-getan wurde, *wie* es getan wurde und *womit* das Ergebnis belegt ist (Eigenschaft E3:
-standardisiert, reproduzierbar).
+getan wurde, *wie* es getan wurde und *womit* das Ergebnis belegt ist.
 
-#hinweis[Nextcloud-Link zum Artefaktverzeichnis hier bzw. im Anhang einfügen.]
 
 == Reproduzierbarkeit, Integrität und Werkzeuge
 
@@ -97,15 +95,14 @@ cp /mnt/client/Windows/AppCompat/Programs/Amcache.hve hives/")
 #table(
   columns: (auto, auto, auto),
   thead[Werkzeug][Version][Zweck],
-  [RegRipper], [#hinweis[Version eintragen: `rip.pl` -Ausgabe]], [Registry-Auswertung],
-  [EvtxeCmd], [#hinweis[Version aus CSV-Header]], [Event-Log-Aufbereitung],
+  [RegRipper], [#hinweis[Rip v.3.0]], [Registry-Auswertung],
+  [EvtxeCmd], [#hinweis[1.5.2.0]], [Event-Log-Aufbereitung],
   [esedbexport (libesedb)], [20240420], [SRUM-Extraktion],
   [vshadowinfo (libvshadow)], [20240504], [Volume Shadow Copies],
-  [ExifTool], [#hinweis[`exiftool -ver`]], [Dokumentmetadaten],
-  [The Sleuth Kit (mmls)], [#hinweis[`mmls -V`]], [Partitionsanalyse],
+  [ExifTool], [#hinweis[`13.53`]], [Dokumentmetadaten],
+  [The Sleuth Kit (mmls)], [#hinweis[`4.11.1`]], [Partitionsanalyse],
 )
 
-#hinweis[Fehlende Versionsnummern eintragen: `rip.pl` (Kopfzeile), `exiftool -ver`, `mmls -V`, EvtxeCmd (Konsolenausgabe beim Start).]
 
 === Zeitzone und Zeitstempel-Konvention
 
@@ -117,7 +114,7 @@ Ergebnis: *Singapore Standard Time*, Bias `-480` Minuten, also *UTC+8*. Die von 
 Werkzeugen ausgegebenen Zeitstempel liegen in *UTC* („Z“) vor; für die lokale
 Systemzeit sind acht Stunden zu addieren. Sämtliche Zeitangaben in diesem Kapitel sind,
 sofern nicht anders gekennzeichnet, in UTC. Die Umrechnung in Ortszeit erfolgt in der
-korrelierten Zeitleiste (Kap. 5.5).
+korrelierten Zeitleiste.
 
 #beweis("timezone.png", [RegRipper-Plugin `timezone`: Singapore Standard Time, Bias -480 (UTC+8).], aktiv: true)
 
@@ -165,8 +162,7 @@ rip.pl -r hives/SOFTWARE -p profilelist > out/C5_profilelist.txt")
   `L.vogel`. Administratorrechte und fehlende Passwortpflicht begünstigten den
   Angriffsverlauf.
 
-  *Korrelation.* Der Hostname `DESKTOP-GKDAU52` deckt sich mit dem Client 192.168.50.30
-  (Kap. 5.1/5.2).
+  *Korrelation.* Der Hostname `DESKTOP-GKDAU52` deckt sich mit dem Client 192.168.50.30.
 
   #quelle("out/D1_samparse.txt, out/C2_winver.txt, out/B1_compname.txt, out/C5_profilelist.txt")
 ]
@@ -273,7 +269,7 @@ cat thunderbird/App/Test/login_check.py")
 LECmd.exe -d lnk --csv out --csvf lnk.csv
 JLECmd.exe -d jumplists --csv out --csvf jumplists.csv")
 
-  #beweis("recentdocs.png", [RecentDocs: geöffnete Schaddateien (.py, .zip, .txt)], aktiv: true)
+  #beweis("recentdocs.png", [RecentDocs: geöffnete Schaddateien (zB .py, .zip, .txt)], aktiv: true)
 
   *Was.* RecentDocs listet sämtliche Angriffsdateien als zuletzt geöffnet: `App.zip`,
   `main.py`, `login_check.py`, `README.md`, `pwlog.txt`, `credentials.txt`. Die
@@ -356,7 +352,7 @@ python3 firefox_decrypt.py firefox/   # bzw. Auswertung von logins.json")
   Dies erklärt den Serverzugriff und begründet zentrale Empfehlungen.
 
   *Korrelation.* Fundort `pwlog.txt` = hartkodierter Pfad aus F-WIN-03. Die
-  Serverzugangsdaten sind Grundlage des SSH-Zugriffs (Kap. 5.1/5.2).
+  Serverzugangsdaten sind Grundlage des SSH-Zugriffs.
 
   #quelle("Desktop\\App\\pwlog.txt, Desktop\\credentials.txt, firefox/logins.json, firefox/key4.db")
 ]
@@ -388,8 +384,7 @@ exiftool -r project/Projekte/ > out/exif_projekte.txt")
   deren Berücksichtigung entstünde der falsche Eindruck einer Manipulation. Ein
   clientseitiges Timestomping ist nicht belegt.
 
-  *Korrelation.* Exfiltration/Löschung der Konstruktionsdaten erfolgte serverseitig
-  (Kap. 5.1/5.4). Die clientseitigen Dokumente belegen Wert und Sensibilität der
+  *Korrelation.* Exfiltration/Löschung der Konstruktionsdaten erfolgte serverseitig. Die clientseitigen Dokumente belegen Wert und Sensibilität der
   Zielobjekte.
 
   #quelle("project/Projekte/cad_notes.docx.odt, project/Projekte/Stueckliste.ods, project/Projekte/Besprechungsnotizen.odt, project/Projekte/new_notes.odt")
@@ -449,7 +444,7 @@ rip.pl -r hives/SOFTWARE -p networklist > out/C3_networklist.txt")
   *Bedeutung.* Der Datenabfluss erfolgte nicht über einen USB-Datenträger am Client. Der
   „Forensik-USB“ ist ein Werkzeug des Ermittlungsteams (Ermittlerartefakt).
 
-  *Korrelation.* Exfiltration (SSH/scp) serverseitig, Kap. 5.1/5.2. Ergänzt F-WIN-12.
+  *Korrelation.* Exfiltration (SSH/scp) serverseitig. Ergänzt F-WIN-12.
 
   #quelle("out/B3_usbstor.txt, out/B4_mounteddevices.txt, out/C3_networklist.txt, out/E1_shellbags.txt")
 ]
@@ -470,7 +465,7 @@ vshadowinfo -o $((673792*512)) Client.dd")
   Löschung der CAD-Daten erfolgte serverseitig. Mangels Schattenkopien keine
   clientseitige Rekonstruktion früherer Versionen möglich.
 
-  *Korrelation.* Löschung/Wiederherstellung der CAD-Daten: Kap. 5.4.
+  *Korrelation.* Löschung/Wiederherstellung der CAD-Daten.
 ]
 
 #finding("F-WIN-11", "Event Logs, SRUM, Notifications, Thumbnails")[
@@ -478,7 +473,6 @@ vshadowinfo -o $((673792*512)) Client.dd")
 esedbexport -t srum/srum srum.export/../SRUDB.dat
 sqlite3 notifications/wpndatabase.db \"SELECT ArrivalTime, Payload FROM Notification;\"")
 
-  #beweis("F-WIN-11_events.png", [Event-Log-Auswertung (events.csv) und Notification mit Bezug auf 192.168.50.30.])
 
   *Was.* *Event Logs* (`winevt\Logs`) mit EvtxeCmd zu `events.csv` aufbereitet. Eine
   Prozess-Auditierung (Event-ID 4688) war nicht aktiviert (Standardkonfiguration Windows
@@ -497,8 +491,7 @@ sqlite3 notifications/wpndatabase.db \"SELECT ArrivalTime, Payload FROM Notifica
   python-Netzwerknutzung im SRUM ist konsistent — der Stealer speicherte lokal, die
   Exfiltration erfolgte serverseitig.
 
-  *Korrelation.* Die Thunderbird-Notification (192.168.50.30) stützt F-WIN-01. Netzseitige
-  Exfiltration: Kap. 5.1.
+  *Korrelation.* Die Thunderbird-Notification (192.168.50.30) stützt F-WIN-01.
 
   #quelle("out/events.csv, srum/srum.export/, notifications/wpndatabase.db")
 ]
@@ -509,7 +502,6 @@ sqlite3 notifications/wpndatabase.db \"SELECT ArrivalTime, Payload FROM Notifica
   #befehl("rip.pl -r hives/SOFTWARE -p uninstall > out/C4_uninstall.txt
 ls prefetch/ | grep -iE \"FTK|WIRESHARK|VELOCIRAPTOR|WINPMEM|NPCAP\"")
 
-  #beweis("F-WIN-12_ermittler.png", [Ermittlerartefakte: FTK Imager, Wireshark, Velociraptor, WinPmem in Prefetch/UserAssist/BAM.])
 
   *Was.* Zahlreiche Artefakte dokumentieren die forensische Akquise und sind vom Angriff
   zu trennen. UserAssist/BAM führen `FTK Imager.exe`, `Wireshark-4.6.6-x64.exe`,
@@ -550,5 +542,4 @@ Sämtliche Zeitangaben sind unter Berücksichtigung der Systemzeitzone UTC+8 zu
 interpretieren.
 
 Die weitere Verwendung der erbeuteten Serverzugangsdaten (SSH-Zugriff, Exfiltration und
-Löschung der CAD-Daten) ist Gegenstand der Netzwerk-, Linux- und Datenträgerforensik
-(Kap. 5.1, 5.2, 5.4). Die zeitliche Gesamtkorrelation aller Domänen erfolgt in Kap. 5.5.
+Löschung der CAD-Daten) ist Gegenstand der Netzwerk-, Linux- und Datenträgerforensik.

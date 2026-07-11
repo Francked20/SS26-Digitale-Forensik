@@ -28,7 +28,7 @@ nachfolgende Beweisführung ein und ist Teil der *Present*-Phase des S-A-P-Model
 Die Geschäftsführung der Bayern Präzision GmbH beauftragte das Forensik-Team mit
 der vollständigen und nachvollziehbaren Aufklärung des Vorfalls. Das Gutachten
 beantwortet die folgenden fünf Leitfragen; jede Frage wird am Ende in der
-Schlussfolgerung (Kap. Present) beweisgestützt beantwortet.
+Present Phase beweisgestützt beantwortet.
 
 + *Datenabfluss.* Wurden vertrauliche Konstruktionsdaten unbefugt entwendet?
   Wenn ja, welche konkret?
@@ -49,8 +49,7 @@ fiktiv und dienen ausschließlich der Lehre. Die Asservate wurden dem Team in
 aufbereiteter Form (Datenträgerabbilder, RAM-Dumps, Netzwerkmitschnitt,
 Live-Response-Ausgaben) übergeben. Die Aufbewahrungsfrist der Asservate ist auf
 sechs Monate festgelegt; danach erfolgt die datenschutzkonforme Löschung. Die
-Bearbeitung folgt dem Grundsatz der Nichtveränderung der Originaldaten (siehe
-Kap. Grundlagen und Rahmen, Abschnitt „Forensische Grundsätze“).
+Bearbeitung folgt dem Grundsatz der Nichtveränderung der Originaldaten.
 
 === Untersuchungszeitraum und Arbeitsumgebung
 

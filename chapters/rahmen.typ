@@ -1,6 +1,6 @@
 #import "../style/style.typ": thead, hinweis
 
-= Grundlagen und Rahmen
+= Grundlagen und Rahmen <kap-rahmen>
 
 Dieses Kapitel legt die methodische und technische Grundlage der Untersuchung
 offen. Es beschreibt das zugrunde gelegte Vorgehensmodell (S-A-P), die
@@ -86,8 +86,7 @@ Post-Mortem-Datenträgerabbilder.
 
 === Verwendete Werkzeuge
 
-Alle eingesetzten Werkzeuge entstammen dem in der Vorlesung behandelten Kanon.
-Sie sind nachfolgend nach Forensikbereich und S-A-P-Phase gegliedert.
+Hier gelistet sind Beispiele von Tools, die benutzt haben.
 
 #table(
   columns: (auto, 1fr, auto),
@@ -107,9 +106,9 @@ Sie sind nachfolgend nach Forensikbereich und S-A-P-Phase gegliedert.
   table.cell(colspan: 3, fill: luma(238))[*Datenträger- und Dateiforensik*],
   [The Sleuth Kit (`mmls`, `fls`, `icat`, `istat`, `blkls`, `mactime`)],
     [Partitions-, Datei- und Metadatenanalyse, Extraktion, Timelining], [Analyse],
-  [Autopsy], [Grafisches Frontend für TSK, Dateisystem-Browsing], [Analyse],
+  
   [foremost / scalpel], [File Carving aus dem Unallocated Space], [Analyse],
-  [Rifiuti2], [Analyse des Windows-Papierkorbs (`$I`/`$R`)], [Analyse],
+  
 
   table.cell(colspan: 3, fill: luma(238))[*Betriebssystem- und Anwendungsforensik (Windows)*],
   [RegRipper (`rip.pl`)], [Auswertung der Registry-Hives (Plugins)], [Analyse],
@@ -122,8 +121,6 @@ Sie sind nachfolgend nach Forensikbereich und S-A-P-Phase gegliedert.
   table.cell(colspan: 3, fill: luma(238))[*Speicherforensik (RAM)*],
   [Volatility], [Analyse der RAM-Abbilder (pslist, pstree, netscan, cmdline, filescan, malfind)], [Analyse],
 
-  table.cell(colspan: 3, fill: luma(238))[*Timeline / Korrelation*],
-  [plaso / log2timeline], [Erzeugung einer Super-Timeline aus mehreren Quellen], [Analyse],
 )
 
 === Forensische Grundsätze
@@ -147,10 +144,27 @@ zugrunde. Ihre Einhaltung ist Voraussetzung für die Verwertbarkeit der Befunde.
 - *Vier-Augen-Prinzip / Objektivität.* Befunde werden wertneutral erhoben; auch
   ergebnislose oder entlastende Prüfungen werden dokumentiert.
 - *Abgrenzung der Ermittlerartefakte.* Spuren, die erst durch die Sicherung
-  selbst entstehen (Qemu.img.exe, WinPmem, Velociraptor, Npcap), werden klar von den
+  selbst entstehen (FTK Imager, WinPmem, Velociraptor, Npcap), werden klar von den
   Täterspuren getrennt ausgewiesen.
 - *Locard'sches Prinzip.* Jede Interaktion hinterlässt Spuren — Grundlage dafür,
   dass die Täterhandlungen über mehrere unabhängige Artefaktquellen belegbar sind.
+
+=== Kennzeichnung der Befunde
+
+Zur eindeutigen, domänenübergreifenden Referenzierung erhält jeder zentrale
+Befund eine Kennung. Die vier Bearbeiter verwenden dabei bereichsspezifische,
+aber konsistent aufgebaute Schemata; die korrelierte Gesamttimeline führt sie zusammen.
+
+#table(
+  columns: (auto, auto, 1fr),
+  thead[Bereich][Schema][Beispiel],
+  [Netzwerk (M1)], [`Finding N`], [Finding 1 (RDP-Angriffsvektor)],
+  [Linux/Server + RAM (M2)], [`B{Nr}-{Asservat}-SQ-{Jahr}`], [B003-SERVER-SQ-2026],
+  [Windows/Anwendung (M3)], [`F-WIN-{Nr}`], [F-WIN-06 (Zugangsdaten)],
+  [Windows-RAM (M3)], [`F-RAM-{Nr}`], [F-RAM-01 (Prozessliste)],
+  [Live-Response (M3)], [`F-LR-{Nr}`], [F-LR-02 (ARP-Cache)],
+  [Datenträger/Datei (M4)], [`Finding N`], [Finding 3 (Timestomping)],
+)
 
 == Infrastruktur
 
@@ -160,11 +174,12 @@ Der Fall wurde in einer isolierten VMware-Laborumgebung mit vier virtuellen
 Maschinen nachgestellt. Alle Systeme befinden sich im internen, vom Internet
 getrennten Netzsegment `net-quarry` (192.168.50.0/24). Die Isolation wurde
 netzwerkforensisch bestätigt (kein DNS-Verkehr, keine externen IP-Adressen im
-Mitschnitt, siehe Kap. Netzwerkforensik).
+Mitschnitt).
 
-#hinweis[Netzwerkdiagramm einfügen (`res/netzwerk.png`): vier VMs im Segment
-`net-quarry` (192.168.50.0/24), Angreifer → Client (RDP) und Angreifer →
-Server (SSH).]
+#figure(
+  image("../res/netzplan.png", width: 98%),
+  caption: [Übersicht der Laborinfrastruktur],
+) <fig-kali-dir>
 
 === Systemübersicht
 
@@ -181,6 +196,6 @@ Der Client `DESKTOP-GKDAU52` ist auf die Zeitzone *Singapore Standard Time
 (UTC+8)* eingestellt. Sämtliche werkzeuggenerierten Zeitstempel liegen in UTC
 („Z") vor; für die lokale Systemzeit des Clients sind +8 Stunden zu addieren.
 Diese Konvention gilt einheitlich für das gesamte Gutachten und ist in der
-korrelierten Gesamttimeline (Kap. Present) berücksichtigt.
+korrelierten Gesamttimeline berücksichtigt.
 
 #pagebreak(weak: true)

@@ -37,20 +37,15 @@
 = Speicherforensik (RAM) des Windows-Clients
 
 Gegenstand dieses Abschnitts ist die Analyse des Arbeitsspeicherabbilds des
-Windows-Clients (`client_ram.mem`). Die Auswertung folgt der in der Vorlesung
-vorgestellten strukturierten Analyse mit Volatility (Prozesse, Dienste, Netzwerk,
+Windows-Clients (`client_ram.mem`). Die Auswertung folgt der Analyse mit Volatility (Prozesse, Dienste, Netzwerk,
 weitere Module, Malware-Analyse). Ziel war die Korrelation mit den auf dem
-Datenträger festgestellten Befunden (Kap. 5.3) sowie die Prüfung auf laufende
+Datenträger festgestellten Befunden sowie die Prüfung auf laufende
 Schadprozesse, verdächtige Netzwerkverbindungen und Code-Injektion zum Zeitpunkt der
 Sicherung.
 
 == Werkzeug, Image-Identifikation und Reproduzierbarkeit
 
-Die Vorlesung führt Volatility in Version 2.6 (profilbasiert) ein, weist jedoch
-ausdrücklich darauf hin, dass seit Windows 10 der Arbeitsspeicher komprimiert wird
-und Version 3 hierfür ein geeignetes Verfahren besitzt sowie die Symboltabellen
-automatisch lädt. Da es sich beim Client um *Windows 10 (Build 19041/19045)* handelt,
-wurde *Volatility 3 (Framework 2.28.0)* eingesetzt.
+Hier wurde *Volatility 3 (Framework 2.28.0)* eingesetzt, da es sich beim Client um *Windows 10 (Build 19041/19045)* handelt
 
 Der erste und wichtigste Schritt ist die Identifikation des Abbilds:
 
@@ -58,12 +53,12 @@ Der erste und wichtigste Schritt ist die Identifikation des Abbilds:
 
 #beweis("info.png", [`windows.info`: Windows 10, x64, Major/Minor 15.19041, SystemTime 2026-07-05 00:37:28 UTC.], aktiv: true)
 
-Ergebnis: Windows 10 x64, `Major/Minor 15.19041`, 2 Prozessoren (`KeNumberProcessors 2`),
+*Ergebnis*: Windows 10 x64, `Major/Minor 15.19041`, 2 Prozessoren (`KeNumberProcessors 2`),
 `SystemTime 2026-07-05 00:37:28 UTC` (lokal 08:37 UTC+8). Die Symboltabelle
 (`ntkrnlmp.pdb`) wurde von Volatility 3 automatisch geladen. Der Sicherungszeitpunkt
 (05.07.2026) liegt in der Akquisephase des Ermittlungsteams.
 
-#quelle("ram/R0_info.txt")
+
 
 == Prozessanalyse
 
@@ -114,7 +109,7 @@ vol -f client_ram.mem windows.psscan > ram/R3_psscan.txt")
 
   *Bedeutung.* Zum Sicherungszeitpunkt bestand keine clientseitige Exfiltrationsverbindung.
   Dies ist konsistent mit dem Gesamtbild: die Exfiltration der CAD-Daten erfolgte
-  serverseitig (Kap. 5.1/5.2), nicht über den Client. Die lokalen Listener sind
+  serverseitig, nicht über den Client. Die lokalen Listener sind
   Standarddienste von Windows 10.
 
   *Korrelation.* Stützt F-WIN-11 (kein python-Netzwerkverkehr im SRUM) und die

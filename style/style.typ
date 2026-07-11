@@ -48,6 +48,9 @@
 
   // ---------- Überschriften: schlicht, nur Akzentfarbe ----------
   set heading(numbering: "1.1")
+  // Querverweise auf Kapitel zeigen nur die Nummer (das Wort "Kap."
+  // steht bereits im Fließtext), daher kein automatisches Supplement.
+  set ref(supplement: none)
   show heading: it => {
     set text(fill: accent, font: body-font)
     block(above: 1.3em, below: 0.7em)[#it]

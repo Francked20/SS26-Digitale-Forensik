@@ -12,7 +12,7 @@ Nach der Erstellung eines forensischen Images des kompromittierten Servers mit U
   [01], [Server Disk Image (Server.dd)],
   [03], [RAM Dump (server_ram.lime)],
 )
-#hinweis[Übersicht der untersuchten Asservate. Die Nummerierung entspricht der Gliederung.]
+
 
 == Befundkatalog (Beweis-IDs)
 
