@@ -42,7 +42,7 @@
 #include "chapters/analyse_windows.typ"
 #include "chapters/analyse_ram.typ"
 #include "chapters/analyse_datenträger.typ"
-#include "chapters/live_response.typ"
+#include "chapters/live_res.typ"
 
 // ---------- Teil F: Present-Phase ----------
 #include "chapters/present.typ"
