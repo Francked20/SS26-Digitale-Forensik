@@ -28,7 +28,7 @@
 == Rekonstruierte Angriffs-Timeline
 
 #table(
-  columns: 4,
+  columns: 3,
   [*Zeit (UTC)*], [*Ereignis*], [*Beweis*],
   [00:23:42], [RDP-Verbindung aufgebaut], [Sessions-Tab, Port 3389],
   [00:23:42], [Benutzername "vogel" erfasst], [RDP-Cookie (Credentials-Tab)],
