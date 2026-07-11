@@ -38,7 +38,7 @@
   #text(weight: "bold")[Quelldatei:] #raw(pfad) #text(style: "italic")[(siehe Artefaktverzeichnis, Anhang)]
 ]
 
-== Live-Response-Analyse des Windows-Clients
+= Live-Response-Analyse des Windows-Clients
 
 Neben der Post-Mortem-Auswertung (Kap. 5.3) und der Speicheranalyse (Kap. 5.4) wurde
 am laufenden System eine *Live-Response* durchgeführt und mittels Velociraptor
@@ -54,7 +54,7 @@ erstellt wurde, bildet sie den Systemzustand während der Sicherung ab. Einige E
 
 #quelle("live_response.txt")
 
-=== Systeminformationen (systeminfo)
+== Systeminformationen (systeminfo)
 
 #finding("F-LR-01", "Systemzustand und Bestätigung der Systemparameter")[
   #befehl("# via Velociraptor Live-Response gesammelt:
@@ -81,7 +81,7 @@ systeminfo")
   #quelle("live_response.txt")
 ]
 
-=== Netzwerkzustand (ipconfig, netstat, arp)
+== Netzwerkzustand (ipconfig, netstat, arp)
 
 #finding("F-LR-02", "ARP-Cache: Nachweis der Netzwerkkommunikation mit dem Angreifer-Host")[
   #befehl("ipconfig /all
@@ -115,7 +115,7 @@ arp -a")
   #quelle("live_response.txt")
 ]
 
-=== Prozesse und geplante Aufgaben (tasklist, schtasks)
+== Prozesse und geplante Aufgaben (tasklist, schtasks)
 
 #finding("F-LR-03", "Laufende Prozesse und geplante Aufgaben (Bestätigung: keine Persistenz)")[
   #befehl("tasklist /v
@@ -143,7 +143,7 @@ schtasks /query /fo LIST /v")
   #quelle("live_response.txt")
 ]
 
-=== Zusammenfassung der Live-Response
+== Zusammenfassung der Live-Response
 
 Die Live-Response bestätigt die Post-Mortem- und Speicherbefunde am laufenden System
 und liefert einen eigenständigen, wichtigen Beweis: den *dynamischen ARP-Eintrag für

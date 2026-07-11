@@ -34,7 +34,7 @@
   #text(weight: "bold")[Quelldatei:] #raw(pfad) #text(style: "italic")[(siehe Artefaktverzeichnis, Anhang)]
 ]
 
-== Speicherforensik des Windows-Clients
+= Speicherforensik (RAM) des Windows-Clients
 
 Gegenstand dieses Abschnitts ist die Analyse des Arbeitsspeicherabbilds des
 Windows-Clients (`client_ram.mem`). Die Auswertung folgt der in der Vorlesung
@@ -44,7 +44,7 @@ Datenträger festgestellten Befunden (Kap. 5.3) sowie die Prüfung auf laufende
 Schadprozesse, verdächtige Netzwerkverbindungen und Code-Injektion zum Zeitpunkt der
 Sicherung.
 
-=== Werkzeug, Image-Identifikation und Reproduzierbarkeit
+== Werkzeug, Image-Identifikation und Reproduzierbarkeit
 
 Die Vorlesung führt Volatility in Version 2.6 (profilbasiert) ein, weist jedoch
 ausdrücklich darauf hin, dass seit Windows 10 der Arbeitsspeicher komprimiert wird
@@ -65,7 +65,7 @@ Ergebnis: Windows 10 x64, `Major/Minor 15.19041`, 2 Prozessoren (`KeNumberProces
 
 #quelle("ram/R0_info.txt")
 
-=== Prozessanalyse
+== Prozessanalyse
 
 #finding("F-RAM-01", "Prozessliste und Prozessbaum (pslist, pstree, psscan)")[
   #befehl("vol -f client_ram.mem windows.pslist > ram/R1_pslist.txt
@@ -97,7 +97,7 @@ vol -f client_ram.mem windows.psscan > ram/R3_psscan.txt")
   #quelle("ram/R1_pslist.txt, ram/R2_pstree.txt, ram/R3_psscan.txt")
 ]
 
-=== Netzwerkanalyse
+== Netzwerkanalyse
 
 #finding("F-RAM-02", "Netzwerkverbindungen (netscan)")[
   #befehl("vol -f client_ram.mem windows.netscan > ram/R4_netscan.txt")
@@ -123,7 +123,7 @@ vol -f client_ram.mem windows.psscan > ram/R3_psscan.txt")
   #quelle("ram/R4_netscan.txt")
 ]
 
-=== Kommandozeilen und Dateiobjekte
+== Kommandozeilen und Dateiobjekte
 
 #finding("F-RAM-03", "Kommandozeilen und speicherresidente Dateiobjekte (cmdline, filescan)")[
   #befehl("vol -f client_ram.mem windows.cmdline > ram/R5_cmdline.txt
@@ -153,7 +153,7 @@ grep -iE \"App|pwlog|Thunderbird|logins.json\" ram/R6_filescan.txt")
   #quelle("ram/R5_cmdline.txt, ram/R6_filescan.txt")
 ]
 
-=== Malware-Analyse
+== Malware-Analyse
 
 #finding("F-RAM-04", "Code-Injektion (malfind)")[
   #befehl("vol -f client_ram.mem windows.malfind > ram/R8_malfind.txt")
@@ -179,7 +179,7 @@ grep -iE \"App|pwlog|Thunderbird|logins.json\" ram/R6_filescan.txt")
   #quelle("ram/R8_malfind.txt")
 ]
 
-=== Abgrenzung: Ermittlerartefakte im Arbeitsspeicher
+== Abgrenzung: Ermittlerartefakte im Arbeitsspeicher
 
 #finding("F-RAM-05", "Nachweis des Sicherungswerkzeugs (WinPmem)")[
   #befehl("grep -i winpmem ram/R1_pslist.txt ram/R5_cmdline.txt")
@@ -203,7 +203,7 @@ grep -iE \"App|pwlog|Thunderbird|logins.json\" ram/R6_filescan.txt")
   #quelle("ram/R1_pslist.txt, ram/R5_cmdline.txt")
 ]
 
-=== Grenzen der Speicheranalyse (nicht erfolgreiche Auswertungen)
+== Grenzen der Speicheranalyse (nicht erfolgreiche Auswertungen)
 
 Im Sinne einer vollständigen und ehrlichen Dokumentation werden auch die
 Auswertungen aufgeführt, die aufgrund technischer Einschränkungen kein Ergebnis
@@ -237,7 +237,7 @@ vol -f client_ram.mem windows.hashdump  # Swap error")
   #quelle("ram/R7_svcscan.txt (leer), ram/R9_hashdump.txt (leer)")
 ]
 
-=== Zusammenfassung des Speicherbefunds
+== Zusammenfassung des Speicherbefunds
 
 Die Speicheranalyse bestätigt und ergänzt die disk-seitigen Befunde, liefert jedoch
 keinen eigenständigen Nachweis einer laufenden Schadaktivität — was mit dem

@@ -169,13 +169,13 @@ Erst danach konnte das logische Volume schreibgeschützt eingebunden werden:
 
 Die tatsächliche Vorgehensweise zum Einbinden des Abbildes weicht damit von einem einfachen `mount -o loop,ro` ab, da die GPT-Partitionierung sowie die LVM-Struktur des Servers eine mehrstufige Vorbereitung (Loop-Device, LVM-Import, Volume-Aktivierung) erforderten.
 
-= Findings
+== Findings
 
-== Auswertung von Logdateien und Bash-History (`Server.dd`)
+=== Auswertung von Logdateien und Bash-History (`Server.dd`)
 
 Nach dem erfolgreichen Mounten des Abbildes (@fig-mount) wurden zunächst die Authentifizierungsprotokolle des Systems ausgewertet, um Hinweise auf einen initialen oder wiederholten Zugriff auf das System zu finden.
 
-=== Auswertung von auth.log
+==== Auswertung von auth.log
 
 Die Filterung des Logs nach erfolgreichen Anmeldungen ergab zwei Treffer für denselben Benutzer auf dem Host `projektserver`:
 
@@ -194,7 +194,7 @@ Die Filterung des Logs nach erfolgreichen Anmeldungen ergab zwei Treffer für de
 
 Beide Anmeldungen erfolgten per Passwort-Authentifizierung innerhalb eines Zeitfensters von rund zwei Minuten und stammen von derselben Quell-IP-Adresse. Dies deutet auf zwei aufeinanderfolgende interaktive SSH-Sitzungen desselben Akteurs hin. Die IP-Adresse 192.168.50.10 sollte als zentraler IOC in die teamübergreifende Korrelation einfließen.
 
-=== Auswertung der Bash-History
+==== Auswertung der Bash-History
 
 Die vollständige Bash-History des Benutzers m.vogel wurde zunächst im Ganzen gesichtet:
 
@@ -229,7 +229,7 @@ sowie die anschließenden Befehle zur Manipulation der Zeitstempel:
 
 Die gefilterten Ausgaben zeigen, dass diese Befehle mehrfach vorkommen (siehe @fig-rm), was auf zwei separate Sitzungen schließen lässt – passend zu den beiden in @fig-auth dokumentierten SSH-Logins.
 
-== Nachweis von Timestomping im Projektverzeichnis
+=== Nachweis von Timestomping im Projektverzeichnis
 
 Die Live-Sichtung von `/srv/projekte` zeigte auf den ersten Blick unauffällige, aber inkonsistente Zeitstempel:
 
@@ -262,7 +262,7 @@ Dieser Befund (@fig-stat) ist forensisch von zentraler Bedeutung: `touch -t` kan
 
 Die Analyse belegt damit einen Versuch der Anti-Forensik (Timestomping): Es wurde gezielt versucht, die Spuren des Zugriffs durch Zurücksetzen von Zeitstempeln zu verschleiern – die vom Dateisystem unabhängig geführte ctime entlarvt diesen Versuch jedoch eindeutig.
 
-== Schlussfolgerung Datenträgeranalyse
+=== Schlussfolgerung Datenträgeranalyse
 
 Die Analyse des Linux-Servers liefert klare Hinweise auf einen gezielten Zugriff mit anschließender Löschung und Verschleierung von Projektdaten:
 

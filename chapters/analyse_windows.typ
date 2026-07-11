@@ -38,7 +38,7 @@
   #text(weight: "bold")[Quelldatei:] #raw(pfad) #text(style: "italic")[(siehe Artefaktverzeichnis, Anhang)]
 ]
 
-== Windows-Betriebssystem- und Anwendungsforensik
+= Windows-Betriebssystem- und Anwendungsforensik
 #text(style: "italic", fill: gray.darken(20%))[Bearbeiter: Mitglied 3]
 
 Gegenstand dieses Abschnitts ist die post-mortem-Auswertung des Datenträgerabbilds
@@ -58,7 +58,7 @@ standardisiert, reproduzierbar).
 
 #hinweis[Nextcloud-Link zum Artefaktverzeichnis hier bzw. im Anhang einfügen.]
 
-=== Reproduzierbarkeit, Integrität und Werkzeuge
+== Reproduzierbarkeit, Integrität und Werkzeuge
 
 Die gesamte Auswertung ist mit den nachstehenden Angaben reproduzierbar. Das
 Datenträgerabbild wurde ausschließlich schreibgeschützt eingebunden; die Integrität
@@ -95,7 +95,7 @@ cp /mnt/client/Windows/AppCompat/Programs/Amcache.hve hives/")
 
 *Eingesetzte Werkzeuge (Versionen).*
 #table(
-  columns: (auto, auto, 1fr),
+  columns: (auto, auto, auto),
   thead[Werkzeug][Version][Zweck],
   [RegRipper], [#hinweis[Version eintragen: `rip.pl` -Ausgabe]], [Registry-Auswertung],
   [EvtxeCmd], [#hinweis[Version aus CSV-Header]], [Event-Log-Aufbereitung],
@@ -107,7 +107,7 @@ cp /mnt/client/Windows/AppCompat/Programs/Amcache.hve hives/")
 
 #hinweis[Fehlende Versionsnummern eintragen: `rip.pl` (Kopfzeile), `exiftool -ver`, `mmls -V`, EvtxeCmd (Konsolenausgabe beim Start).]
 
-==== Zeitzone und Zeitstempel-Konvention
+=== Zeitzone und Zeitstempel-Konvention
 
 Die Systemzeitzone wurde aus der Registry ermittelt:
 
@@ -123,7 +123,7 @@ korrelierten Zeitleiste (Kap. 5.5).
 
 #quelle("out/B2_timezone.txt")
 
-==== Abgrenzung von Ermittler- und Täterartefakten
+=== Abgrenzung von Ermittler- und Täterartefakten
 
 Ein zentraler Befund ist, dass sich auf dem System zwei klar trennbare
 Aktivitätsphasen abbilden:
@@ -140,7 +140,7 @@ Zahlreiche Artefakte enthalten Einträge vom 05.07.2026, die eindeutig der Täti
 des Ermittlungsteams zuzuordnen sind. Diese werden konsequent als Ermittlerartefakte
 gekennzeichnet und nicht als Angriffsspuren gewertet (siehe F-WIN-12).
 
-=== Systemidentifikation und Benutzerkonten
+== Systemidentifikation und Benutzerkonten
 
 #finding("F-WIN-00", "Systemidentifikation und Benutzerkonten")[
   #befehl("rip.pl -r hives/SAM -p samparse > out/D1_samparse.txt
@@ -171,7 +171,7 @@ rip.pl -r hives/SOFTWARE -p profilelist > out/C5_profilelist.txt")
   #quelle("out/D1_samparse.txt, out/C2_winver.txt, out/B1_compname.txt, out/C5_profilelist.txt")
 ]
 
-=== Initialer Angriffsvektor: Phishing-Mail
+== Initialer Angriffsvektor: Phishing-Mail
 
 #finding("F-WIN-01", "Phishing-Mail als initialer Zugangsvektor (Thunderbird)")[
   #befehl("cp \"/mnt/client/Users/User/AppData/Roaming/Thunderbird/Profiles/6p73ordg.default-release/Mail/Local Folders/Inbox\" thunderbird/Inbox
@@ -202,7 +202,7 @@ cat thunderbird/Inbox")
   #quelle("thunderbird/Inbox")
 ]
 
-=== Schadpaket und Benutzerinteraktion
+== Schadpaket und Benutzerinteraktion
 
 #finding("F-WIN-02", "Schadpaket App.zip: Herkunft und Handhabung")[
   #befehl("sha256sum thunderbird/App.zip
@@ -236,7 +236,7 @@ rip.pl -r hives/UsrClass.dat -p shellbags > out/E1_shellbags.txt")
 // zusätzlicher Beweis README optional:
 #beweis("readme.png", [`README.md`: persönlich adressierte Handlungsanweisung an „Markus".], aktiv: true)
 
-=== Analyse des Schadcodes
+== Analyse des Schadcodes
 
 #finding("F-WIN-03", "Credential-Stealer: gefälschtes Windows-Anmeldefenster")[
   #befehl("cat thunderbird/App/main.py
@@ -266,7 +266,7 @@ cat thunderbird/App/Test/login_check.py")
   #quelle("thunderbird/App/main.py, thunderbird/App/Test/login_check.py")
 ]
 
-=== Nachweis der Ausführung
+== Nachweis der Ausführung
 
 #finding("F-WIN-04", "Zugriff auf die Schaddateien (RecentDocs, LNK, Jump Lists)")[
   #befehl("rip.pl -r hives/NTUSER.DAT -p recentdocs > out/A3_recentdocs.txt
@@ -328,7 +328,7 @@ ls prefetch/PYTHON.EXE-*.pf")
 
 #hinweis[Methodische Anmerkung: PECmd verweigert unter Linux die Prefetch-Dekompression („Non-Windows platforms not supported"). Da die Ausführung dreifach (UserAssist, BAM, Timeline) belegt ist, wurde auf eine Windows-VM verzichtet.]
 
-=== Erbeutete und exponierte Zugangsdaten
+== Erbeutete und exponierte Zugangsdaten
 
 #finding("F-WIN-06", "Erbeutete und exponierte Zugangsdaten (pwlog.txt, credentials.txt, Firefox)")[
   #befehl("cat /mnt/client/Users/User/Desktop/App/pwlog.txt
@@ -361,7 +361,7 @@ python3 firefox_decrypt.py firefox/   # bzw. Auswertung von logins.json")
   #quelle("Desktop\\App\\pwlog.txt, Desktop\\credentials.txt, firefox/logins.json, firefox/key4.db")
 ]
 
-=== Sensible Konstruktionsunterlagen und Dokumentmetadaten
+== Sensible Konstruktionsunterlagen und Dokumentmetadaten
 
 #finding("F-WIN-07", "Sensible Projektdaten und Metadaten (ExifTool)")[
   #befehl("exiftool project/Projekte/cad_notes.docx.odt
@@ -395,7 +395,7 @@ exiftool -r project/Projekte/ > out/exif_projekte.txt")
   #quelle("project/Projekte/cad_notes.docx.odt, project/Projekte/Stueckliste.ods, project/Projekte/Besprechungsnotizen.odt, project/Projekte/new_notes.odt")
 ]
 
-=== Prüfung auf Persistenz (Befund durch Abwesenheit)
+== Prüfung auf Persistenz (Befund durch Abwesenheit)
 
 #finding("F-WIN-08", "Kein Persistenzmechanismus vorhanden")[
   #befehl("rip.pl -r hives/NTUSER.DAT -p run > out/F-WIN-01_run_hkcu.txt
@@ -426,7 +426,7 @@ grep -rilE \"python|main.py|App|SecurityUpdater\" /mnt/client/Windows/System32/T
   #quelle("out/F-WIN-01_run_hkcu.txt, out/F-WIN-01_run_hklm.txt, tasks/")
 ]
 
-=== Weitere geprüfte Artefaktklassen (Vollständigkeitsnachweis)
+== Weitere geprüfte Artefaktklassen (Vollständigkeitsnachweis)
 
 Zur vollständigen Abdeckung des Windows-Artefaktkatalogs wurden folgende Klassen
 zusätzlich geprüft. Auch negative Befunde werden dokumentiert.
@@ -503,7 +503,7 @@ sqlite3 notifications/wpndatabase.db \"SELECT ArrivalTime, Payload FROM Notifica
   #quelle("out/events.csv, srum/srum.export/, notifications/wpndatabase.db")
 ]
 
-=== Abgrenzung der Ermittlertätigkeit
+== Abgrenzung der Ermittlertätigkeit
 
 #finding("F-WIN-12", "Zuordnung der Ermittlerartefakte (05.07.2026)")[
   #befehl("rip.pl -r hives/SOFTWARE -p uninstall > out/C4_uninstall.txt
@@ -533,7 +533,7 @@ ls prefetch/ | grep -iE \"FTK|WIRESHARK|VELOCIRAPTOR|WINPMEM|NPCAP\"")
   #quelle("out/A1_userassist.txt, out/B5_bam.txt, out/C4_uninstall.txt, firefox/places.sqlite, prefetch/")
 ]
 
-=== Zusammenfassung des Windows-Befunds
+== Zusammenfassung des Windows-Befunds
 
 Die Auswertung belegt clientseitig eine geschlossene Angriffskette: Eine Phishing-Mail
 (F-WIN-01) lieferte das Schadpaket `App.zip` (F-WIN-02), dessen Code ein gefälschtes
