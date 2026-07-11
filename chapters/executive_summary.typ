@@ -49,7 +49,7 @@ Unallocated Space (`blkls`/`strings`) rekonstruiert, aber nicht vollständig
 wiederhergestellt werden.
 
 *Abgegrenzte Ermittlerartefakte.* Die während der Sicherung eingesetzten
-Werkzeuge (FTK Imager, WinPmem, Velociraptor, Wireshark/Npcap) erzeugen eigene
+Werkzeuge (Qemu.img.exe, WinPmem, Velociraptor, Wireshark/Npcap) erzeugen eigene
 Spuren, die konsequent von den Täterspuren getrennt dokumentiert sind
 (F-WIN-12, F-RAM-05).
 

@@ -54,7 +54,7 @@ Artefaktverzeichnis überführt und ausschließlich als Arbeitskopie analysiert.
   [05.07.2026], [A05 `.pcap`], [Netzwerkmitschnitt beendet, gehasht, gesichert], [Team],
   [05.07.2026], [A03/A04 RAM], [RAM-Sicherung Server (LiME) & Client (WinPmem)], [Team],
   [05.07.2026], [A06/A07/A08], [Live-Response & Velociraptor-Sammlung Client], [Team],
-  [05.07.2026], [A01/A02 `.dd`], [Post-Mortem-Datenträgerabbilder (FTK Imager)], [Team],
+  [05.07.2026], [A01/A02 `.dd`], [Post-Mortem-Datenträgerabbilder (Qemu.img.exe)], [Team],
   [05.–11.07.], [alle], [Read-only-Analyse auf der SIFT Workstation], [M1–M4],
 )
 
@@ -93,8 +93,7 @@ Server-RAM-Analyse (Mitglied 2).
 Die zunächst geplante RAM-Sicherung mit *FTK Imager* („Capture Memory")
 scheiterte mit der Meldung „Could not start driver" — der Kernel-Treiber ließ
 sich trotz Administratorrechten wegen der Windows-Treibersignaturprüfung in der
-isolierten VM nicht laden. Als in der Vorlesung genannte, gleichwertige
-Alternative wurde daraufhin *WinPmem* eingesetzt:
+isolierten VM nicht laden. Alternative wurde daraufhin *WinPmem* eingesetzt:
 
 ```powershell
 winpmem_mini_x64_rc2.exe client_ram.mem
@@ -137,7 +136,7 @@ als ZIP-Archive (A07, A08) exportiert.
 
 == Sicherung der beständigen Daten (Datenträgerabbilder)
 
-Die Post-Mortem-Abbilder beider Zielsysteme wurden mit *FTK Imager* als
+Die Post-Mortem-Abbilder beider Zielsysteme wurden mit *Qemu.img.exe* als
 Roh-Images (`.dd`) erzeugt und dabei unmittelbar gehasht (A01 `Server.dd`,
 A02 `Client.dd`). Die Struktur der Abbilder (Partitionen, Dateisysteme) ist in
 den jeweiligen Analysekapiteln dokumentiert; die Einbindung erfolgte
@@ -146,7 +145,7 @@ ausschließlich schreibgeschützt (read-only).
 == Abgrenzung der Ermittlerartefakte
 
 Die in dieser Phase eingesetzten Werkzeuge (tcpdump, LiME, WinPmem,
-Live-Response-Kommandos, Velociraptor, FTK Imager, Npcap) hinterlassen eigene
+Live-Response-Kommandos, Velociraptor, Qemu.img.exe, Npcap) hinterlassen eigene
 Spuren auf den Zielsystemen. Diese *Ermittlerartefakte* sind vom Tatgeschehen zu
 trennen und werden in den Analysekapiteln explizit als solche gekennzeichnet
 (insbesondere F-WIN-12 „Zuordnung der Ermittlerartefakte" und F-RAM-05

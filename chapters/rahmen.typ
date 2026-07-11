@@ -76,7 +76,7 @@ volatilen Spuren durch die Sicherung beständigerer Quellen verloren gehen.
   [3], [Netzwerkzustand (ARP, Routing, offene Ports)],
        [Live-Response, tcpdump],
   [4], [Laufende Prozesse / temporäre Dateien], [Velociraptor],
-  [5], [Datenträger (Dateisystem, gelöschte Daten)], [FTK Imager → `.dd`],
+  [5], [Datenträger (Dateisystem, gelöschte Daten)], [Qemu.img.exe → `.dd`],
   [6], [Archiv-/Backup-Medien], [nicht relevant],
 )
 
@@ -94,7 +94,7 @@ Sie sind nachfolgend nach Forensikbereich und S-A-P-Phase gegliedert.
   thead[Werkzeug][Zweck][Phase],
 
   table.cell(colspan: 3, fill: luma(238))[*Sicherung (Secure)*],
-  [FTK Imager], [Forensisch sichere Datenträgerabbilder (`.dd`) inkl. Hashwertbildung], [Secure],
+  [Qemu.img.exe], [Forensisch sichere Datenträgerabbilder (`.dd`) inkl. Hashwertbildung], [Secure],
   [WinPmem], [RAM-Sicherung des Windows-Clients], [Secure],
   [LiME], [RAM-Sicherung des Linux-Servers (Kernel-Modul)], [Secure],
   [tcpdump], [Netzwerkmitschnitt auf dem Serversegment (`silent_quarry.pcap`)], [Secure],
@@ -147,7 +147,7 @@ zugrunde. Ihre Einhaltung ist Voraussetzung für die Verwertbarkeit der Befunde.
 - *Vier-Augen-Prinzip / Objektivität.* Befunde werden wertneutral erhoben; auch
   ergebnislose oder entlastende Prüfungen werden dokumentiert.
 - *Abgrenzung der Ermittlerartefakte.* Spuren, die erst durch die Sicherung
-  selbst entstehen (FTK Imager, WinPmem, Velociraptor, Npcap), werden klar von den
+  selbst entstehen (Qemu.img.exe, WinPmem, Velociraptor, Npcap), werden klar von den
   Täterspuren getrennt ausgewiesen.
 - *Locard'sches Prinzip.* Jede Interaktion hinterlässt Spuren — Grundlage dafür,
   dass die Täterhandlungen über mehrere unabhängige Artefaktquellen belegbar sind.
