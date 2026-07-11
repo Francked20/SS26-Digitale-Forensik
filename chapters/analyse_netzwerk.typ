@@ -8,6 +8,7 @@
   columns: 2,
   [*Datei*], [silent_quarry.pcap],
   [*Größe*], [~8.82 MB],
+  [*Tools genutzt*], [Wireshark, NetworkMiner],
   [*Gesamtpakete*], [12.132],
   [*Aufnahmeort*], [VM2 (Server), Interface ens37],
   [*Aufnahmedauer*], [00:05:36],
@@ -51,31 +52,31 @@
   fill: (col, row) => if row == 0 { rgb("#f4f4f5") } else if calc.even(row) { rgb("#fafafa") } else { none },
   
   // Header
-  [*ID*], [*Vektor / Thema*], [*Betroffene Systeme*], [*Kernbefund / Evidenz*],
+  [*ID*], [*Vektor / Thema*], [*Betroffene Systeme*], [*Kernbefund / Evidenz*],[*Proof von Artefacts*],
   
   // Row 1
   [B001-NETZ-SQ-2026], 
   [RDP-Angriffsvektor], 
   [192.168.50.10 (Angreifer) \ -> 192.168.50.30 (Client)], 
-  [TLS-1.2-verschlüsselte RDP-Sitzung. Übertragung von ca. 8 MB Bildschirmdaten. Benutzername "vogel" wurde im RDP-Cookie im Klartext erfasst.],
+  [TLS-1.2-verschlüsselte RDP-Sitzung. Übertragung von ca. 8 MB Bildschirmdaten. Benutzername "vogel" wurde im RDP-Cookie im Klartext erfasst.], [RDP_Verbindung.pcap],
   
   // Row 2
   [B002-NETZ-SQ-2026], 
   [SSH-Credential-Wiederverwendung], 
   [192.168.50.10 (Angreifer) \ -> 192.168.50.20 (Server)], 
-  [Aufbau von zwei SSH-Sitzungen mit den gestohlenen Zugangsdaten von "vogel". Erste Sitzung dauerte 233s, zweite Sitzung war eine kurze Zweitverbindung (6s) ohne Datenextraktion.],
+  [Aufbau von zwei SSH-Sitzungen mit den gestohlenen Zugangsdaten von "vogel". Erste Sitzung dauerte 233s, zweite Sitzung war eine kurze Zweitverbindung (6s) ohne Datenextraktion.],[NetworkMiner_Session.txt],
   
   // Row 3
   [B003-NETZ-SQ-2026], 
   [Datenexfiltration], 
   [192.168.50.20 (Server) \ -> 192.168.50.10 (Angreifer)], 
-  [Exfiltration von ca. 1 MB verschlüsselten Daten innerhalb der ersten SSH-Sitzung. Kontinuierlicher Transfer über ca. 4 Minuten hinweg.],
+  [Exfiltration von ca. 1 MB verschlüsselten Daten innerhalb der ersten SSH-Sitzung. Kontinuierlicher Transfer über ca. 4 Minuten hinweg.], [SSH_Verbindung1.txt],
   
   // Row 4
   [B004-NETZ-SQ-2026], 
   [TLS-Zertifikat], 
   [192.168.50.30 (Client)], 
-  [Extraktion des Zertifikats `DESKTOP-GKDAU52.cer` aus dem RDP-Handshake. Bestätigt unabhängig den Windows-Hostnamen des Opfer-Clients.],
+  [Extraktion des Zertifikats `DESKTOP-GKDAU52.cer` aus dem RDP-Handshake. Bestätigt unabhängig den Windows-Hostnamen des Opfer-Clients.], [NetworkMiner_Files.txt],
 )
 
 === Finding 1: RDP als Angriffsvektor
