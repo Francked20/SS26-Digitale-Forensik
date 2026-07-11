@@ -73,7 +73,7 @@ wurde vor der Analyse durch Hashwertbildung gesichert.
   [`credentials.txt`], [SHA-256], [`09846850a7809eed4293ecd3ce6f43e7a2966efd94f4c941622032c366fb26d9`],
 )
 
-#beweis("repro_hashes.png", [Hashwertbildung der Asservate (`sha1sum` / `sha256sum`).])
+
 
 *Partitionierung und schreibgeschützte Einbindung.* Die Struktur des Abbilds wurde
 mit `mmls` ermittelt (GPT/EFI, Windows-Partition „Basic data partition“, Start-Sektor
