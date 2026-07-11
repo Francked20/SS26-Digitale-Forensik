@@ -151,6 +151,156 @@ schtasks /query /fo LIST /v")
   #quelle("live_response.txt")
 ]
 
+== Velociraptor Live Response Analyse
+
+Im Rahmen der Windows-Forensik wurden die mittels Velociraptor gesammelten Artefakte des kompromittierten Clients (`DESKTOP-GKDAU52`, `192.168.50.30`) ausgewertet. Ziel der Analyse war die Rekonstruktion der Angriffskette anhand der auf dem Windows-System hinterlassenen Spuren.
+
+Die Auswertung erfolgte mit dem Werkzeug *Timeline Explorer* (Eric Zimmerman Tools) sowie durch manuelle Sichtung der exportierten CSV-Artefakte. Methodisch handelt es sich um eine *Artefakt-Korrelation* und *Timeline-Analyse*, bei der verschiedene Windows-Artefakte in chronologische Beziehung gesetzt werden, um den Tatablauf nachzuvollziehen.
+
+== Übersicht der ausgewerteten Artefakte
+
+#table(
+  columns: 2,
+  stroke: 0.5pt,
+  [*Artefakt*], [*Forensischer Zweck*],
+  [Event Logs (EVTX)], [Nachweis des RDP-Zugriffs und der Privilegien],
+  [Prefetch], [Nachweis der Programmausführung (Schadsoftware)],
+  [UserAssist], [Chronologie der GUI-Programmausführungen],
+  [Amcache], [Datei-Identifikation und Hashes],
+)
+
+== Rekonstruktion der Angriffskette (UserAssist)
+
+Die UserAssist-Analyse liefert den forensisch wertvollsten Befund dieser Untersuchung: die chronologische Abfolge der GUI-Programmausführungen durch den Benutzer. Diese Sequenz bildet das Rückgrat der Timeline-Rekonstruktion und ordnet die einzelnen Angriffsschritte zeitlich ein.
+
+#table(
+  columns: 3,
+  stroke: 0.5pt,
+  [*Reihenfolge*], [*Programm*], [*Forensische Bedeutung*],
+  [1], [Thunderbird], [Öffnen der Phishing-E-Mail durch das Opfer],
+  [2], [python.exe], [Ausführung der Schadsoftware (main.py)],
+  [3], [Notepad], [Angreifer öffnet `credentials.txt` über RDP],
+)
+
+*Interpretation der Sequenz:*
+
+Die chronologische Abfolge der UserAssist-Einträge belegt die einzelnen Phasen des Angriffs:
+
++ *Thunderbird:* Das Opfer (Vogel) öffnete die präparierte Phishing-E-Mail mit dem Betreff "Wichtiges Update für Ihre Konstruktionssoftware".
++ *python.exe:* Kurz darauf wurde durch das Ausführen des Anhangs die Schadsoftware `main.py` gestartet, welche ein gefälschtes Anmeldefenster anzeigte und die Windows-Anmeldedaten des Opfers erfasste.
++ *Notepad:* Nicht lange nach der Schadsoftware-Ausführung wurde Notepad geöffnet. Dieser Schritt fällt bereits in die Phase des Angreifer-Zugriffs: Über die RDP-Sitzung öffnete der Angreifer die auf dem Desktop abgelegte Datei `credentials.txt`, um die dort im Klartext hinterlegten Server-Zugangsdaten (`m.vogel:Werkzeug\#2026`) auszulesen.
+
+#figure(
+  image("../res/LivRes/userassist_sequence.png", width: 90%),
+  caption: [UserAssist: Chronologische Abfolge der Programmausführungen 
+    (Thunderbird $arrow$ python.exe $arrow$ Notepad)],
+) <fig-userassist-sequence>
+
+== Nachweis der Schadsoftware-Ausführung (Prefetch)
+
+Die Prefetch-Analyse bestätigt unabhängig von UserAssist die Ausführung von `PYTHON.EXE`, welches die Python-basierte Schadsoftware (`main.py`) interpretierte. Der Zeitstempel deckt sich mit dem UserAssist-Eintrag und liegt unmittelbar vor dem SSH-Angriff.
+
+#table(
+  columns: 2,
+  stroke: 0.5pt,
+  [*Attribut*], [*Wert*],
+  [Prefetch-Datei], [`PYTHON.EXE-[hash].pf`],
+  [Zeitstempel (Mod Time)], [00:22:43Z],
+  [Bedeutung], [Ausführung der Python-Schadsoftware main.py],
+)
+
+#figure(
+  image("../res/LivRes/prefetch_python.png", width: 85%),
+  caption: [Prefetch-Eintrag für PYTHON.EXE mit Ausführungszeitstempel],
+) <fig-prefetch-python>
+
+== Nachweis des RDP-Zugriffs (Event Log Analyse)
+
+Während UserAssist und Prefetch die clientseitigen Aktivitäten belegen, dokumentieren die Windows Event Logs den eigentlichen Fernzugriff des Angreifers über das Remote Desktop Protocol (RDP). Der Terminal Services Manager protokollierte die eingehende Verbindung direkt vom Angreifer-Host.
+
+*Gefundenes Schlüssel-Event:*
+
+#quote(block: true)[
+  "Remote Desktop Services accepted a connection from IP address 192.168.50.10."
+]
+
+Dieser Eintrag beweist, dass die Verbindung vom Kali-Angreifer (`192.168.50.10`) ausging und vom Zielsystem akzeptiert wurde. Der Befund korreliert direkt mit der Netzwerkanalyse (M1), in der die RDP-Sitzung von `192.168.50.10` im PCAP über Port 3389 nachgewiesen wurde.
+
+#table(
+  columns: 2,
+  stroke: 0.5pt,
+  [*Attribut*], [*Wert*],
+  [Ereignistyp], [RDP-Verbindung akzeptiert],
+  [Quell-IP], [192.168.50.10 (Kali-Angreifer)],
+  [Dienst], [Remote Desktop Services],
+  [Zielsystem], [DESKTOP-GKDAU52],
+)
+
+#figure(
+  image("../res/LivRes/eventlog_rdp_connection.png", width: 90%),
+  caption: [Event Log: Annahme der RDP-Verbindung von 192.168.50.10],
+) <fig-rdp-connection>
+
+=== Zugewiesene Sonderprivilegien und Enumeration
+
+Nach der erfolgreichen Anmeldung dokumentieren die Event Logs die Zuweisung weitreichender administrativer Privilegien an das kompromittierte Konto `vogel` sowie Anzeichen von Konto-Enumeration.
+
+*Zugewiesene Privilegien (Event: Special privileges assigned to new logon):*
+
+#table(
+  columns: 2,
+  stroke: 0.5pt,
+  [*Privileg*], [*Bedeutung*],
+  [`SeDebugPrivilege`], [Zugriff auf fremde Prozesse],
+  [`SeTakeOwnershipPrivilege`], [Übernahme von Datei-Eigentümerschaft],
+  [`SeLoadDriverPrivilege`], [Laden von Kernel-Treibern],
+  [`SeBackupPrivilege`], [Umgehung von Dateiberechtigungen],
+  [`SeRestorePrivilege`], [Wiederherstellungsrechte],
+  [`SeImpersonatePrivilege`], [Identitätsübernahme],
+)
+
+Zusätzlich wurde ein Event registriert, das die Abfrage nach leeren Passwörtern dokumentiert (Ziel: `WDAGUtilityAccount`) — ein typisches Merkmal von Reconnaissance-Aktivitäten des Angreifers.
+
+#figure(
+  image("../res/LivRes/eventlog_privileges.png", width: 90%),
+  caption: [Event Log: Zuweisung administrativer Sonderprivilegien an das Konto vogel],
+) <fig-privileges>
+
+== Zeitliche Gesamtkorrelation
+
+Die Zusammenführung aller Windows-Artefakte mit der Netzwerkanalyse (M1) ergibt eine lückenlose, chronologische Rekonstruktion der Angriffskette:
+
+#table(
+  columns: 3,
+  stroke: 0.5pt,
+  [*Zeit (UTC)*], [*Ereignis*], [*Quelle*],
+  [00:22:10Z], [Thunderbird geöffnet (Phishing-E-Mail)], [UserAssist],
+  [00:22:43Z], [Ausführung PYTHON.EXE (Schadsoftware)], [Prefetch / UserAssist],
+  [00:23:42Z], [RDP-Verbindung von 192.168.50.10 akzeptiert], [Event Log/ PCAP (M1)],
+  [00:23:51Z], [Notepad geöffnet (credentials.txt)], [UserAssist],
+  [00:24:35Z], [Erste SSH-Verbindung zum Server], [PCAP (M1)],
+)
+
+Die enge zeitliche Abfolge — insbesondere das Öffnen von Notepad unmittelbar vor der SSH-Verbindung — belegt die kausale Kette: Der Angreifer las die Server-Zugangsdaten aus `credentials.txt` aus und nutzte diese wenige Sekunden später für den SSH-Zugriff auf den Projektserver.
+
+== Zusammenfassung der Windows-forensischen Befunde
+
+Die Windows-Artefakt-Analyse (M3) rekonstruiert die clientseitige Angriffskette lückenlos und bestätigt die Befunde der Netzwerkforensik (M1):
+
+#table(
+  columns: 3,
+  stroke: 0.5pt,
+  [*Angriffsphase*], [*Windows-Artefakt*], [*Nachweis*],
+  [Phishing geöffnet], [UserAssist], [Thunderbird-Ausführung],
+  [Schadsoftware ausgeführt], [Prefetch, UserAssist], [python.exe-Ausführung],
+  [RDP-Zugriff], [Event Log], [Verbindung von 192.168.50.10],
+  [Privilegien-Erhöhung], [Event Log], [SeDebugPrivilege u.a.],
+  [Credential-Diebstahl], [UserAssist], [Notepad öffnet credentials.txt],
+)
+
+Die konsistente Korrelation zwischen den Windows-Artefakten (M3) und der Netzwerkanalyse (M1) untermauert die Beweiskette: Der Angriff begann mit einer Phishing-E-Mail, führte über die Ausführung der Schadsoftware und den RDP-Zugriff zum Diebstahl der Server-Zugangsdaten und mündete schließlich in der SSH-basierten Kompromittierung des Projektservers.
+
+
 == Zusammenfassung der Live-Response
 
 Die Live-Response bestätigt die Post-Mortem- und Speicherbefunde am laufenden System

@@ -16,7 +16,7 @@ Beweissicherung, Zusammenführung, Präsentation) wurden gemeinsam bearbeitet.
   columns: (auto, 1.2fr, auto, 1.6fr),
   align: (center, left, left, left),
   thead[Rolle][Name][MatNr.][Verantwortungsbereich],
-  [Mitglied 1], [Bin Mohd Farid Muhammad], [12306215], [Netzwerkforensik (PCAP), Infrastrukturaufbau, Laborvorbereitung, Live response],
+  [Mitglied 1], [Bin Mohd Farid Muhammad], [12306215], [Netzwerkforensik (PCAP), Infrastrukturaufbau, Laborvorbereitung, Live response,],
   [Mitglied 2], [Kouami Jérôme Houngbo], [00801723], [Linux-/Server-OS- und Server-RAM-Forensik],
   [Mitglied 3], [Franck Emmanuel Da Si], [22209183], [Windows-OS-, Anwendungs-, Client-RAM- und Live-Response-Forensik],
   [Mitglied 4], [Syaura Binti Yusaini], [12306221], [Datenträger-/Dateiforensik (Server.dd)],
