@@ -16,12 +16,12 @@ Auf der Angreifer-Plattform (Kali Linux, `192.168.50.10`) wurde im Verzeichnis `
 ) <fig-kali-dir>
 
 #figure(
-  image("../res/Images_Aufbau/new_cdApp.png", width: 85%),
+  image("../res/Images_Aufbau/new_prank.png", width: 85%),
   caption: [Inhalt der Datei `prank.txt` mit dem vorbereiteten Phishing-Mailtext],
 ) <fig-kali-prank>
 
 #figure(
-  image("../res/Images_Aufbau/new_cdApp.png", width: 85%),
+  image("../res/Images_Aufbau/new_readme.png", width: 85%),
   caption: [Inhalt der `README.md` innerhalb des präparierten App-Archivs],
 ) <fig-kali-readme>
 
