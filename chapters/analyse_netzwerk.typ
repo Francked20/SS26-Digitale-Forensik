@@ -29,11 +29,11 @@
 
 #table(
   columns: 4,
-  [*Zeit (UTC)*], [*Zeit (CEST)*], [*Ereignis*], [*Beweis*],
-  [00:23:42], [02:23:42], [RDP-Verbindung aufgebaut], [Sessions-Tab, Port 3389],
-  [00:23:42], [02:23:42], [Benutzername "vogel" erfasst], [RDP-Cookie (Credentials-Tab)],
-  [00:24:35], [02:24:35], [SSH-Verbindung \#1(Exfiltration)], [Sessions-Tab, Port 22],
-  [00:26:47], [02:26:47], [SSH-Verbindung \#2], [Sessions-Tab, Port 22],
+  [*Zeit (UTC)*], [*Ereignis*], [*Beweis*],
+  [00:23:42], [RDP-Verbindung aufgebaut], [Sessions-Tab, Port 3389],
+  [00:23:42], [Benutzername "vogel" erfasst], [RDP-Cookie (Credentials-Tab)],
+  [00:24:35], [SSH-Verbindung \#1(Exfiltration)], [Sessions-Tab, Port 22],
+  [00:26:47], [SSH-Verbindung \#2], [Sessions-Tab, Port 22],
 )
 
 == Zentrale Befunde
