@@ -25,6 +25,8 @@
 // ---------- Teil A: Verwaltung & Prolog ----------
 #include "chapters/erklärung.typ"
 #include "chapters/prolog.typ"
+#include "chapters/attack.typ"
+#include "chapters/aufbau.typ"
 
 // ---------- Teil B: Zusammenfassungen ----------
 #include "chapters/management_summary.typ"
@@ -36,6 +38,7 @@
 // ---------- Teil D: Secure-Phase ----------
 #include "chapters/sammlung_beweis.typ"
 
+
 // ---------- Teil E: Analyse-Phase (4 Bereiche, je 1 Mitglied) ----------
 #include "chapters/analyse_netzwerk.typ"
 #include "chapters/analyse_linux.typ"
@@ -43,6 +46,7 @@
 #include "chapters/analyse_ram.typ"
 #include "chapters/analyse_datenträger.typ"
 #include "chapters/live_res.typ"
+
 
 // ---------- Teil F: Present-Phase ----------
 #include "chapters/present.typ"
