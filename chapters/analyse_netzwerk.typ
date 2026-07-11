@@ -41,7 +41,7 @@
 === Zusammenfassung der zentralen Befunde
 
 #table(
-  columns: (auto, auto, auto, auto),
+  columns: (auto, auto, auto, auto, auto),
   inset: 10pt,
   align: (col, row) => (
     if row == 0 { center + horizon }
@@ -70,7 +70,7 @@
   [B003-NETZ-SQ-2026], 
   [Datenexfiltration], 
   [192.168.50.20 (Server) \ -> 192.168.50.10 (Angreifer)], 
-  [Exfiltration von ca. 1 MB verschlüsselten Daten innerhalb der ersten SSH-Sitzung. Kontinuierlicher Transfer über ca. 4 Minuten hinweg.], [SSH_Verbindung1.txt],
+  [Exfiltration von ca. 1 MB verschlüsselten Daten innerhalb der ersten SSH-Sitzung. Kontinuierlicher Transfer über ca. 4 Minuten hinweg.], [SSH_Verbindung1.pcap],
   
   // Row 4
   [B004-NETZ-SQ-2026], 
