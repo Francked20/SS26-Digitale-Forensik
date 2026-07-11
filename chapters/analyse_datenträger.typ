@@ -6,7 +6,6 @@
   columns: 4,
   [*Asservat*], [*Datei*], [*Beschreibung*], [*SHA-256*],
   [01], [`Server.dd`], [Datenträgerabbild des Ubuntu-Projektservers], [`4960728cc6b74f7d687266cabbc5ea8d649990f54f2a2480a53418d117282b50`],
-  [02], [`Client.dd`], [Datenträgerabbild des Windows-Clients], [`f0d7ba17e5ec5939af0decbe4ad182252fad464515f7a42dd86f61ef91bdf41a`],
 )
 
 == Identifizierte Dateisysteme
@@ -15,7 +14,6 @@
   [*Image*], [*Offset*], [*Dateisystem / Struktur*], [*Bedeutung*],
   [`Server.dd`], [`4096`], [ext4], [`/boot`-Partition],
   [`Server.dd`], [`3721216`], [ext4 über LVM], [relevantes Server-Dateisystem],
-  [`Client.dd`], [`673792`], [NTFS], [Windows Basic Data Partition],
 )
 
 == Zentrale Befunde
@@ -26,7 +24,6 @@
   [Kundendatei extrahiert], [`kunden_2026.csv`], [`icat`], [Datei regulär vorhanden und lesbar],
   [Gelöschte STEP-Inhalte], [`cnc_steuerung_v2.step`, `antriebsachse.step`], [`blkls`, `strings`], [Inhalte als Datenreste im unallocated space gefunden],
   [Timestomping], [`Verwaltung`, `kunden_2026.csv`], [`istat`, `mactime`], [auffällige Zeitstempel],
-  [Papierkorb geprüft], [`$Recycle.Bin`], [`fls`, `Rifiuti2`], [keine auswertbaren  `$I`-/`$R`-Einträge vorhanden],
 )
 
 === Finding 1: Projektverzeichnis auf Server.dd
@@ -122,23 +119,6 @@ Bei `kunden_2026.csv` war auffällig, dass der Accessed- und File-Modified-Zeits
 
 Auch beim Verzeichnis `Verwaltung` war ein auffälliger File-Modified-Zeitstempel auf `2024-01-01 00:00:00 UTC` sichtbar, obwohl das Verzeichnis laut File-Created-Zeitstempel am `2026-06-30` erstellt wurde und der Inode am `2026-07-04` verändert wurde. Auch dieser Befund spricht für Timestomping als Anti-Forensik-Maßnahme.
 
-=== Finding 4: Papierkorbprüfung auf Client.dd
-Auf `Client.dd` wurde die NTFS-Partition bei Offset `673792` untersucht. Mit `fls` wurde der Pfad `C:/$Recycle.Bin` sowie ein Benutzer-SID-Verzeichnis identifiziert.
-
-#figure(
-  image("../res/Images_M4/recycle_tsk.png", width: 90%),
-  caption: [`fls`-Auswertung von `$Recycle.Bin` auf `Client.dd`.]
-)
-
-In diesem Verzeichnis war jedoch nur `desktop.ini` sichtbar. Es wurden keine `$I`- oder `$R`-Dateien gefunden. Zusätzlich wurde `Rifiuti2` gegen das Benutzerverzeichnis im Papierkorb ausgeführt. Das Tool konnte den Pfad öffnen, meldete jedoch einen leeren Ordner und gab keine gelöschten Dateien aus.
-
-#figure(
-  image("../res/Images_M4/clean_rifiuti.png", width: 90%),
-  caption: [`Rifiuti2`-Ausgabe zum Benutzer-Papierkorb.]
-)
-
-Damit konnte aus `Client.dd` kein rekonstruierbarer Papierkorb-Löschvorgang nachgewiesen werden. Dieses Ergebnis widerspricht dem Angriffsszenario jedoch nicht zwangsläufig, da die relevanten Löschhandlungen laut Serverartefakten auf dem Server stattfanden. Das Ergebnis bedeutet, dass im untersuchten Client-Abbild keine auswertbaren Papierkorb-Artefakte in Form von `$I`- oder `$R`-Dateien vorhanden waren.
-
 == Beitrag zur Angriffstimeline
 #table(
   columns: 3,
@@ -159,10 +139,10 @@ Damit konnte aus `Client.dd` kein rekonstruierbarer Papierkorb-Löschvorgang nac
 Die Einträge vom `2024-01-01` stellen keine tatsächlichen Ereigniszeitpunkte des Angriffs dar, sondern manipulierte Zeitstempelwerte. Die späteren Inode-Modified-Zeitpunkte im Jahr 2026 zeigen, dass die Metadaten nachträglich verändert wurden.
 
 == Fazit
-Zussamenfassend zeigte die Datenträger- und Dateiforensik, dass auf `Server.dd` das Verzeichnis `/srv/projekte` vorhanden war. Das Unterverzeichnis `Kunden` enthielt weiterhin die Datei `kunden_2026.csv`, während `Projekte` und `Verwaltung` leer waren. Die Datei `kunden_2026.csv` konnte mit `icat` vollständig extrahiert werden.
+Zusammenfassend zeigte die Datenträger- und Dateiforensik, dass auf `Server.dd` das Verzeichnis `/srv/projekte` vorhanden war. Das Unterverzeichnis `Kunden` enthielt weiterhin die Datei `kunden_2026.csv`, während `Projekte` und `Verwaltung` leer waren. Die Datei `kunden_2026.csv` konnte mit `icat` vollständig extrahiert werden.
 
 Die erwarteten STEP-Artefakte `cnc_steuerung_v2.step` und `antriebsachse.step` waren nicht mehr als reguläre Dateien sichtbar und konnten nicht über `icat` wiederhergestellt werden, da keine gelöschten Inodes vorhanden waren. Über `blkls` und `strings` konnten jedoch die Inhalte `CNC-Steuerung v2 - VERTRAULICH` und `Antriebsachse Spezifikationen` im unallocated space nachgewiesen werden. Damit sind Datenreste gelöschter Projektdaten auf dem Server belegt.
 
 Zusätzlich zeigten `istat` und `mactime` auffällige Zeitstempel, insbesondere beim Verzeichnis `Verwaltung` und bei `kunden_2026.csv`. Die Kombination aus alten Modified-Zeitstempeln und späteren Created- bzw. Inode-Modified-Zeitpunkten unterstützt die Annahme von Zeitstempelmanipulation als Anti-Forensik-Maßnahme.
 
-Auf `Client.dd` wurde der Windows-Papierkorb geprüft. Der Papierkorb war vorhanden, enthielt jedoch keine `$I`- oder `$R`-Artefakte. Rifiuti2 bestätigte einen leeren Papierkorb. Daraus konnte kein rekonstruierbarer Papierkorb-Löschvorgang auf dem Client nachgewiesen werden. Dieses Ergebnis widerspricht dem Angriffsszenario jedoch nicht, da die zentralen Hinweise auf Löschung und Verschleierung auf `Server.dd` liegen und mit den Linux-OS- sowie Netzwerkbefunden der anderen Teilbereiche korrelieren.
+Der Schwerpunkt der Datenträger- und Dateiforensik lag damit auf `Server.dd`. Die zentralen Hinweise auf Löschung und Verschleierung befinden sich im Server-Dateisystem und korrelieren mit den Linux-OS- sowie Netzwerkbefunden der anderen Teilbereiche.
