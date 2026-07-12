@@ -13,7 +13,7 @@
     ("Kouami Jérôme Houngbo", "MatNr. 00801723"),
   ),
   betreuer: "Prof. Dr. Michael Heigl",
-  betreuer2: "A. Popp",
+  betreuer2: none,
   aktenzeichen: "SQ-2026-01",
   location: "Deggendorf",
   semester: "SoSe 2026",
