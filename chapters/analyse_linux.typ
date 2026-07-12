@@ -169,13 +169,12 @@ Erst danach konnte das logische Volume schreibgeschützt eingebunden werden:
 
 Die tatsächliche Vorgehensweise zum Einbinden des Abbildes weicht damit von einem einfachen `mount -o loop,ro` ab, da die GPT-Partitionierung sowie die LVM-Struktur des Servers eine mehrstufige Vorbereitung (Loop-Device, LVM-Import, Volume-Aktivierung) erforderten.
 
-== Findings
 
-=== Auswertung von Logdateien und Bash-History (`Server.dd`)
+== Analyse der Findings aus dem Serverabbild (`Server.dd`)
 
 Nach dem erfolgreichen Mounten des Abbildes (@fig-mount) wurden zunächst die Authentifizierungsprotokolle des Systems ausgewertet, um Hinweise auf einen initialen oder wiederholten Zugriff auf das System zu finden.
 
-==== Auswertung von auth.log
+=== Auswertung von auth.log
 
 Die Filterung des Logs nach erfolgreichen Anmeldungen ergab zwei Treffer für denselben Benutzer auf dem Host `projektserver`:
 
@@ -194,7 +193,7 @@ Die Filterung des Logs nach erfolgreichen Anmeldungen ergab zwei Treffer für de
 
 Beide Anmeldungen erfolgten per Passwort-Authentifizierung innerhalb eines Zeitfensters von rund zwei Minuten und stammen von derselben Quell-IP-Adresse. Dies deutet auf zwei aufeinanderfolgende interaktive SSH-Sitzungen desselben Akteurs hin. Die IP-Adresse 192.168.50.10 sollte als zentraler IOC in die teamübergreifende Korrelation einfließen.
 
-==== Auswertung der Bash-History
+=== Auswertung der Bash-History
 
 Die vollständige Bash-History des Benutzers m.vogel wurde zunächst im Ganzen gesichtet:
 
@@ -256,7 +255,9 @@ Um die durch `touch` gesetzten Zeitstempel zu verifizieren, wurde die Datei mit 
   caption: [Detaillierte Zeitstempel der Datei kunden_2026.csv (`stat kunden_2026.csv`) – Access- und Modify-Zeit wurden manipuliert, Change- und Birth-Zeit belegen die tatsächliche Aktivität],
 ) <fig-stat>
 
-Dieser Befund (@fig-stat) ist forensisch von zentraler Bedeutung: `touch -t` kann Access- (atime) und Modify-Zeitstempel (mtime) frei setzen, hat jedoch keinen Einfluss auf die Change-Zeit (ctime), da diese vom Dateisystem automatisch bei jeder Metadatenänderung aktualisiert wird – auch durch `touch` selbst. Die ctime von kunden_2026.csv (05.07.2026, 00:28:13 UTC) liegt exakt im Zeitfenster kurz nach der zweiten in @fig-auth dokumentierten SSH-Sitzung (00:26:53 UTC). Die Birth-Zeit (crtime, 04.07.2026, 21:08:04 UTC) entspricht zudem exakt dem in @fig-state angezeigten Änderungsdatum des Kunden-Verzeichnisses. (B008-SERVER-SQ-2026)
+Dieser Befund (@fig-stat) ist forensisch von zentraler Bedeutung: `touch -t` kann Access- (atime) und Modify-Zeitstempel (mtime) frei setzen, hat jedoch keinen Einfluss auf die Change-Zeit (ctime), da diese vom Dateisystem automatisch bei jeder Metadatenänderung aktualisiert wird – auch durch `touch` selbst. 
+
+Die ctime von kunden_2026.csv (05.07.2026, 00:28:13 UTC) liegt exakt im Zeitfenster kurz nach der zweiten in @fig-auth dokumentierten SSH-Sitzung (00:26:53 UTC). Die Birth-Zeit (crtime, 04.07.2026, 21:08:04 UTC) entspricht zudem exakt dem in @fig-state angezeigten Änderungsdatum des Kunden-Verzeichnisses. (B008-SERVER-SQ-2026)
 
 *Diese Birth-Zeit korreliert, wie die nachfolgende RAM-Analyse zeigt (siehe Abschnitt „Rekonstruktion der Bash-History aus dem Speicher" im RAM-Kapitel weiter unten), mit der Anlage der Datei durch das Systemkonto svc im Rahmen der Testdatenvorbereitung (B007-RAM-SQ-2026).*
 
