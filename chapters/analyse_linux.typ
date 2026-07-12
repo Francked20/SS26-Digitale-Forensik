@@ -144,7 +144,7 @@ Mit `lsblk` und `blkid` wurden anschließend die einzelnen Partitionen sowie der
   [loop10p2], [1.8G], [ext4],
   [loop10p3], [18.2G], [LVM2_member],
 )
-#hinweis[Zusammenfassung von @fig-lsblk.]
+
 
 Da `loop10p3` als LVM2-Mitglied identifiziert wurde, war ein direktes Mounten nicht möglich. Ein einfacher `vgscan`/`vgchange` hätte zudem zu einem Namenskonflikt geführt, da sowohl die SIFT Workstation selbst als auch das untersuchte Serverabbild eine Volume Group mit dem Ubuntu-Standardnamen `ubuntu-vg` verwenden. Um diesen Konflikt zu vermeiden, wurde die Volume Group des Abbildes mit `vgimportclone` importiert. Dieses Tool vergibt neue UUIDs und benennt die importierte Volume Group automatisch um (hier zu `ubuntu-vg1`), sodass keine Kollision mit der produktiven Volume Group der SIFT Workstation entsteht:
 
@@ -190,7 +190,7 @@ Die Filterung des Logs nach erfolgreichen Anmeldungen ergab zwei Treffer für de
   [2026-07-05T00:24:41], [m.vogel], [192.168.50.10], [47922],
   [2026-07-05T00:26:53], [m.vogel], [192.168.50.10], [52306],
 )
-#hinweis[Zusammenfassung von @fig-auth (B003-SERVER-SQ-2026).]
+
 
 Beide Anmeldungen erfolgten per Passwort-Authentifizierung innerhalb eines Zeitfensters von rund zwei Minuten und stammen von derselben Quell-IP-Adresse. Dies deutet auf zwei aufeinanderfolgende interaktive SSH-Sitzungen desselben Akteurs hin. Die IP-Adresse 192.168.50.10 sollte als zentraler IOC in die teamübergreifende Korrelation einfließen.
 

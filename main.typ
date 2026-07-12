@@ -9,25 +9,24 @@
 // ---------- Titelseite (vor dem Template, eigene Seitenlogik) ----------
 #titlepage(
   authors: (
-    ("Vorname Nachname", "MatNr. 000000"),
-    ("Vorname Nachname", "MatNr. 000000"),
-    ("Vorname Nachname", "MatNr. 000000"),
-    ("Vorname Nachname", "MatNr. 000000"),
+    ("Bin Mohd Farid Muhammad", "MatNr. 12306215"),
+    ("Franck Emmanuel Da Si",    "MatNr. 22209183"),
+    ("Syaura Binti Yusaini",     "MatNr. 12306221"),
+    ("Kouami Jérôme Houngbo",    "MatNr. 00801723"),
   ),
 )
 
 // ---------- Ab hier globales Layout ----------
 #show: gutachten
+#include "chapters/erklärung.typ"
 #include "chapters/arbeitsaufteilung.typ"
 // ---------- Inhaltsverzeichnis ----------
 #table-of-contents()
 
 // ---------- Teil A: Verwaltung & Prolog ----------
 
-#include "chapters/erklärung.typ"
+
 #include "chapters/prolog.typ"
-#include "chapters/attack.typ"
-#include "chapters/aufbau.typ"
 
 // ---------- Teil B: Zusammenfassungen ----------
 #include "chapters/management_summary.typ"
@@ -37,12 +36,12 @@
 #include "chapters/rahmen.typ"
 
 // ---------- Teil D: Secure-Phase ----------
-// sammlung_beweis: Chain of Custody, Asservatenverzeichnis,
-//                  Single-Evidence-Formulare, Hashwerttabelle
-// sicherung_liveresponse: Durchführung der Sicherung
-//                  (tcpdump, RAM, Live-Response-Kommandos, Velociraptor)
+// sammlung_beweis: vollständige Beweissicherung — Asservatenverzeichnis,
+//                  Chain of Custody, Hashwerttabelle UND Durchführung der
+//                  Sicherung (tcpdump, RAM, Live-Response, Velociraptor,
+//                  Datenträgerabbilder, Einordnung). Die zuvor getrennte
+//                  Datei sicherung_liveresponse.typ wurde hier integriert.
 #include "chapters/sammlung_beweis.typ"
-#include "chapters/sicherung_liveresponse.typ"
 
 // ---------- Teil E: Analyse-Phase (nach Mitgliedern / Bereichen) ----------
 #include "chapters/analyse_netzwerk.typ"      // M1 — Netzwerk / PCAP
@@ -56,4 +55,11 @@
 #include "chapters/present.typ"
 
 // ---------- Teil G: Anhang ----------
+// attack:  rekonstruierter Attack Lifecycle (narrative Gesamtschau)
+// aufbau:  Herstellung der Laborartefakte (Environment Setup) —
+//          Lehr-/Reproduktionskontext, kein Beweisführungsschritt
+
+#include "chapters/attack.typ"
+#include "chapters/aufbau.typ"
 #include "chapters/anhang.typ"
+#include "chapters/abbildungsverzeichnis.typ"

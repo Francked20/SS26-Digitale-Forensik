@@ -33,7 +33,7 @@ Present Phase beweisgestützt beantwortet.
 + *Datenabfluss.* Wurden vertrauliche Konstruktionsdaten unbefugt entwendet?
   Wenn ja, welche konkret?
 + *Angriffskette.* Auf welchem Weg erlangte der Täter Zugriff auf den
-  Projektserver (initialer Vektor, Lateral Movement, Exfiltration)?
+  Projektserver?
 + *Herkunft und Zeitpunkt.* Von welchem System aus und zu welchem Zeitpunkt
   erfolgte der Zugriff?
 + *Manipulation.* Wurden Daten gelöscht oder verändert? Sind sie ganz oder in

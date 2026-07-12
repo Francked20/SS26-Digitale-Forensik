@@ -38,12 +38,11 @@
   #text(weight: "bold")[Quelldatei:] #raw(pfad) #text(style: "italic")[(siehe Artefaktverzeichnis, Anhang)]
 ]
 
-= Windows-Betriebssystem- und Anwendungsforensik <kap-windows>
+= Windows-Betriebssystem- und Anwendungsforensik
 #text(style: "italic", fill: gray.darken(20%))[Bearbeiter: Mitglied 3]
 
 Gegenstand dieses Abschnitts ist die post-mortem-Auswertung des Datenträgerabbilds
-des Windows-Clients (Asservat `Client.dd`). Untersucht wurden sämtliche in der
-Vorlesung behandelten Windows-Artefaktklassen (Registry, Prefetch, Event Logs,
+des Windows-Clients (Asservat `Client.dd`). Untersucht wurden sämtliche Windows-Artefaktklassen (Registry, Prefetch, Event Logs,
 Scheduled Tasks, Jump Lists/LNK, Papierkorb, Windows Timeline, SRUM, Thumbnails,
 Notifications, Volume Shadow Copies) sowie die anwendungsbezogenen Artefakte
 (Thunderbird, Firefox, Schadcode, Dokumentmetadaten). Ziel war der Nachweis des
@@ -66,9 +65,9 @@ wurde vor der Analyse durch Hashwertbildung gesichert.
 #table(
   columns: (auto, auto, 1fr),
   thead[Asservat][Verfahren][Hashwert],
-  [`Client.dd`], [SHA-1], [`3b1af5ea0983b1f6c8c751c9b38a7eec5e77a554`],
-  [`App.zip`], [SHA-256], [`b898051b65c2362c8a95649e22fd00e7ce9aaca76b48aeb2645e06661ff78ccd`],
-  [`credentials.txt`], [SHA-256], [`09846850a7809eed4293ecd3ce6f43e7a2966efd94f4c941622032c366fb26d9`],
+  [`Client.dd`], [SHA-256], [`f0d7ba17e5ec5939af0decbe4ad182252fad464515f7a42dd86f61ef91bdf41a`],
+  [`client_ram.mem`], [SHA-256], [`b26723fa8dba5f567500eb9cda5c8b048a84a74986bf6978c3c0644688b665d1`],
+  [`live_response.txt`], [SHA-256], [`c7869c107f378cd100beab26569f1f75d4ffe2669e5254f115a79c52e1f9791c`],
 )
 
 
@@ -130,7 +129,7 @@ Aktivitätsphasen abbilden:
   thead[Phase][Zeitraum (UTC) und Charakter],
   [Angriff (simuliert)], [30.06.–02.07.2026 — Ablage/Entpacken von `App.zip`, Zugang der Phishing-Mail, Navigation im Angriffsordner],
   [Ausführung des Schadcodes], [04.–05.07.2026 — Ausführung von `python.exe` (siehe F-WIN-05)],
-  [Forensische Akquise (Ermittler)], [05.07.2026 — FTK Imager, Wireshark/Npcap, Velociraptor, WinPmem],
+  [Forensische Akquise (Ermittler)], [05.07.2026 — FTK Imager gefunden, Wireshark/Npcap, Velociraptor, WinPmem],
 )
 
 Zahlreiche Artefakte enthalten Einträge vom 05.07.2026, die eindeutig der Tätigkeit

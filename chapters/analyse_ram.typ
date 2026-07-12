@@ -35,6 +35,7 @@
 ]
 
 = Speicherforensik (RAM) des Windows-Clients
+#text(style: "italic", fill: gray.darken(20%))[Bearbeiter: Mitglied 3]
 
 Gegenstand dieses Abschnitts ist die Analyse des Arbeitsspeicherabbilds des
 Windows-Clients (`client_ram.mem`). Die Auswertung folgt der Analyse mit Volatility (Prozesse, Dienste, Netzwerk,
@@ -188,9 +189,7 @@ grep -iE \"App|pwlog|Thunderbird|logins.json\" ram/R6_filescan.txt")
   *Wo.* Asservat `client_ram.mem`; `windows.pslist`, `windows.cmdline`.
 
   *Bedeutung.* Der Dump wurde mit *WinPmem* durch das Ermittlungsteam erstellt; das
-  Werkzeug bildet sich erwartungsgemäß selbst im Abbild ab. Dies beantwortet die in der
-  Vorlesung gestellte Kontrollfrage („mit welchem Werkzeug wurde der Dump erstellt?“)
-  und ist als Ermittlerartefakt von den Angriffsspuren abzugrenzen.
+  Werkzeug bildet sich erwartungsgemäß selbst im Abbild ab.
 
   *Korrelation.* Ergänzt die Abgrenzung der Ermittlertätigkeit (F-WIN-12). Der
   Sicherungszeitpunkt 00:37:28 UTC bildet den oberen Rand des Untersuchungszeitfensters.
@@ -202,8 +201,7 @@ grep -iE \"App|pwlog|Thunderbird|logins.json\" ram/R6_filescan.txt")
 
 Im Sinne einer vollständigen und ehrlichen Dokumentation werden auch die
 Auswertungen aufgeführt, die aufgrund technischer Einschränkungen kein Ergebnis
-lieferten. Diese Einschränkungen sind für Windows 10 in der Vorlesung ausdrücklich
-benannt (Speicherkomprimierung seit Windows 10).
+lieferten. Diese Einschränkungen sind für Windows 10 (Speicherkomprimierung seit Windows 10).
 
 #finding("F-RAM-06", "Nicht erfolgreiche Module (svcscan, hashdump)")[
   #befehl("vol -f client_ram.mem windows.svcscan   # Swap error
@@ -220,7 +218,7 @@ vol -f client_ram.mem windows.hashdump  # Swap error")
   *Bedeutung.* Seit Windows 10 wird der Arbeitsspeicher komprimiert (Xpress-Algorithmus,
   „Compression Store“); ausgelagerte Seiten liegen im `pagefile.sys`. Ohne Einbindung
   der Auslagerungsdatei können bestimmte Module (Dienste, SAM-Hashes) nicht vollständig
-  rekonstruiert werden. Diese Einschränkung ist in der Vorlesung dokumentiert. Eine
+  rekonstruiert werden. Eine
   Wiederholung mit `--single-swap-locations pagefile.sys` ist möglich; die Passwort-Hashes
   sind jedoch bereits disk-seitig verfügbar (SAM-Hive, extrahierbar mit `samdump2`), und
   die Klartext-Zugangsdaten sind über `pwlog.txt`/`credentials.txt` (F-WIN-06) belegt.

@@ -1,6 +1,6 @@
 #import "../style/style.typ": thead, hinweis
 
-= Korrelierte Gesamtbetrachtung und Schlussfolgerung 
+= Korrelierte Gesamtbetrachtung und Schlussfolgerung <kap-present>
 
 Dieses Kapitel führt die Einzelbefunde der vier Forensikbereiche zu einer
 konsistenten Gesamtdarstellung zusammen (Present-Phase). Es zeigt, wie sich die
@@ -8,13 +8,9 @@ Artefakte über Netzwerk, Server, Client, RAM und Datenträger *gegenseitig
 bestätigen* (Korroboration), stellt die rekonstruierte Gesamttimeline dar und
 beantwortet abschließend die fünf Leitfragen aus dem Prolog.
 
-== Zeitzonen-Konvention
-
-Alle Zeitangaben sind, sofern nicht anders vermerkt, in *UTC*. Der Windows-Client
-läuft in *Singapore Standard Time (UTC+8)*; für dessen Ortszeit sind +8 h zu
-addieren. Der Netzwerkmitschnitt und der Server operieren in UTC; einzelne
-Live-Response-/Setup-Angaben wurden zur Nachvollziehbarkeit in ihrer
-Ursprungszone belassen und sind entsprechend gekennzeichnet.
+Es gilt die in @kap-rahmen festgelegte Zeitzonen-Konvention: Alle Zeitangaben
+sind, sofern nicht anders vermerkt, in *UTC*; für die Ortszeit des Windows-Clients
+(Singapore Standard Time) sind +8 h zu addieren.
 
 == Korrelierte Angriffstimeline
 
@@ -36,12 +32,12 @@ belegende Quelle und — wo vorhanden — die zugehörige Finding- bzw. Beweis-I
     im Klartext], [Netzwerk-Finding 1],
   [05.07.2026 00:23:42], [TLS-Zertifikat `DESKTOP-GKDAU52.cer` aus RDP-Handshake],
     [Netzwerk-Finding 4],
-  [05.07.2026 00:24:35], [SSH-Login #1 `m.vogel` von 192.168.50.10 (Dauer 233 s)],
-    [Netzwerk-Finding 2, B003-SERVER-SQ-2026],
-  [05.07.2026 ~00:24–00:28], [Exfiltration ca. 1 MB Server → Angreifer],
-    [Netzwerk-Finding 3],
-  [05.07.2026 00:26:47], [SSH-Login #2 (kurz, 6 s; keine Exfiltration)],
-    [Netzwerk-Finding 2],
+  [05.07.2026 00:24:35], [SSH-Login #1 `m.vogel` von 192.168.50.10 (Dauer 233 s,
+    bis ~00:28:28)], [Netzwerk-Finding 2, B003-SERVER-SQ-2026],
+  [05.07.2026 ~00:24–00:28], [Exfiltration ca. 1 MB Server → Angreifer (in
+    Sitzung #1)], [Netzwerk-Finding 3],
+  [05.07.2026 00:26:47], [SSH-Login #2 (kurz, 6 s) — *parallel* zu noch
+    laufender Sitzung #1; keine Exfiltration], [Netzwerk-Finding 2],
   [05.07.2026 ~00:27–00:28], [Löschung der Projektdaten `rm -rf`],
     [B004-SERVER-SQ-2026, `bash_history`],
   [05.07.2026 ~00:28], [Timestomping `touch -t 202401010000`],
@@ -92,6 +88,18 @@ initiale Zugang (Eingang der Phishing-Mail, Entpacken von `App.zip`) erfolgte
 bereits am 02.07.2026; die Ausführung des Credential-Stealers und der Abgriff der
 Windows-Anmeldedaten sind artefaktseitig auf den 04.–05.07.2026 datiert
 (BAM 05.07. 00:22:55Z, F-WIN-05) — also unmittelbar vor dem RDP-Zugriff.
+
+#hinweis[
+  Einordnung des Ausführungszeitpunkts (Simulationsartefakt). Die auf
+  00:22:55Z datierte Ausführung von `python.exe` fällt in das Zeitfenster, in
+  dem das Team die Laborartefakte erzeugte bzw. sicherte. In einem realen
+  Vorfall läge die Ausführung des Stealers — und damit der Abgriff der
+  Windows-Anmeldedaten — *vor* dem RDP-Zugriff. Der artefaktseitig belegte
+  Zeitpunkt ist somit der Nachstellung des Szenarios geschuldet und wird nicht
+  als „natürliche" Ausführung durch die simulierte Zielperson gewertet
+  (vgl. F-WIN-05, F-WIN-12). Für die logische Angriffskette ist allein die
+  *Reihenfolge* maßgeblich: Credential-Abgriff → RDP → SSH → Exfiltration.
+]
 
 *4. Wurden Daten gelöscht oder manipuliert? Sind sie wiederherstellbar?* \
 Ja. Der Angreifer löschte die Projektdaten (`rm -rf`). Eine vollständige

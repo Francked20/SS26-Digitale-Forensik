@@ -22,7 +22,7 @@
   [*Finding*], [*Artefakt*], [*Tool*], [*Bewertung*],
   [Projektverzeichnis gefunden], [`/srv/projekte`], [`fls`], [Kunden, Projekte und Verwaltung vorhanden],
   [Kundendatei extrahiert], [`kunden_2026.csv`], [`icat`], [Datei regulär vorhanden und lesbar],
-  [Gelöschte STEP-Inhalte], [`cnc_steuerung_v2.step`, `antriebsachse.step`], [`blkls`, `strings`], [Inhalte als Datenreste im unallocated space gefunden],
+  [Gelöschte STEP-Inhalte], [`cnc_steuerung_v2.step`,  `antriebsachse.step`], [  `  blkls`, `strings`], [Inhalte als Datenreste im unallocated space gefunden],
   [Timestomping], [`Verwaltung`, `kunden_2026.csv`], [`istat`, `mactime`], [auffällige Zeitstempel],
 )
 

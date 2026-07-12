@@ -1,6 +1,14 @@
 = Erstellung und Bereitstellung der Artefakte (Environment Setup)
 
-Um das Angriffsszenario für die spätere forensische Analyse vorzubereiten, wurden die bösartigen Artefakte auf der Angreifer-Plattform generiert, die Opfer-Umgebung realistisch eingerichtet und die Zieldaten auf dem Projektserver strukturiert. Dieses Kapitel dokumentiert die einzelnen Setup-Schritte, die eine authentische Angriffskette ermöglichen.
+#text(style: "italic", fill: gray.darken(20%))[
+  Reproduktions- und Lehrkontext. Dieser Abschnitt dokumentiert, wie die
+  Laborartefakte des fiktiven Falls hergestellt wurden. Er gehört methodisch
+  nicht zur Beweisführung des Gutachtens, sondern belegt die Nachstellbarkeit
+  des Szenarios und ordnet die im Hauptteil ausgewerteten Artefakte ihrer
+  Entstehung zu.
+]
+
+Um das Angriffsszenario für die spätere forensische Analyse vorzubereiten, wurden die bösartigen Artefakte auf der Angreifer-Plattform generiert, die Opfer-Umgebung realistisch eingerichtet und die Zieldaten auf dem Projektserver strukturiert. Dieser Anhang dokumentiert die einzelnen Setup-Schritte, die eine authentische Angriffskette ermöglichen.
 
 == Vorbereitung der Phishing-Artefakte auf Kali Linux
 
@@ -101,3 +109,5 @@ Diese Rechtezuweisung ist essentiell für den späteren Angriffsablauf: Sobald d
   image("../res/Images_Aufbau/server_files.png", width: 90%),
   caption: [Befehlsverlauf auf dem Server: Erstellung der Verzeichnisstruktur, Befüllung der Dummy-Dateien und Rechteübergabe per `chown` an `m.vogel`],
 ) <fig-server-setup>
+
+#pagebreak()

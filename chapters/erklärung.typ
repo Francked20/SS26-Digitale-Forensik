@@ -13,10 +13,10 @@ Quelle kenntlich gemacht.
   columns: (1fr, 1fr),
   row-gutter: 2.4cm,
   column-gutter: 1.5cm,
-  [#line(length: 90%, stroke: 0.5pt) Vorname Nachname],
-  [#line(length: 90%, stroke: 0.5pt) Vorname Nachname],
-  [#line(length: 90%, stroke: 0.5pt) Vorname Nachname],
-  [#line(length: 90%, stroke: 0.5pt) Vorname Nachname],
+  [#line(length: 90%, stroke: 0.5pt) Bin Mohd Farid Muhammad],
+  [#line(length: 90%, stroke: 0.5pt) Kouami Jérôme Houngbo],
+  [#line(length: 90%, stroke: 0.5pt) Franck Emmanuel Da Si],
+  [#line(length: 90%, stroke: 0.5pt) Syaura Binti Yusaini],
 )
 
 #pagebreak(weak: true)

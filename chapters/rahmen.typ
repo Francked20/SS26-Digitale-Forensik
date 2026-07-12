@@ -12,21 +12,20 @@ welchen Mitteln* die nachfolgenden Befunde erhoben wurden.
 
 Digitale Forensik gewinnt mit der zunehmenden Digitalisierung von
 Geschäftsprozessen stetig an Bedeutung. Ein erheblicher Teil aller
-sicherheitsrelevanten Vorfälle in Unternehmen beginnt mit menschlichem Faktor —
-insbesondere mit Phishing als initialem Zugriffsvektor — und mündet in
+sicherheitsrelevanten Vorfälle in Unternehmen beginnt mit menschlichem Faktor insbesondere mit Phishing als initialem Zugriffsvektor und mündet in
 Datenabfluss durch kompromittierte Zugangsdaten. Der hier untersuchte Fall
-„Operation Silent Quarry" bildet genau dieses Muster ab: Social Engineering,
+„*Operation Silent Quarry*" bildet genau dieses Muster ab: Social Engineering,
 Diebstahl von Zugangsdaten, Lateral Movement und Exfiltration mit anschließender
 Spurenverwischung. Ziel der digitalen Forensik ist es, einen solchen Vorfall
 *gerichtsverwertbar*, *nachvollziehbar* und *reproduzierbar* aufzuklären: Es soll
 belegt werden, *was* geschah, *wann*, *von wo aus*, *durch welche Handlungen* und
-mit welchem Schaden — ohne die Beweismittel dabei zu verändern.
+mit welchem Schaden ohne die Beweismittel dabei zu verändern.
 
 == Methodik
 
 === Das S-A-P-Modell
 
-Die Untersuchung folgt durchgängig dem in der Vorlesung vermittelten
+Die Untersuchung folgt durchgängig dem
 *S-A-P-Modell* mit drei Phasen:
 
 #table(
@@ -86,13 +85,11 @@ Post-Mortem-Datenträgerabbilder.
 
 === Verwendete Werkzeuge
 
-Hier gelistet sind Beispiele von Tools, die benutzt haben.
+Hier gelistet sind Beispiele von Tools, die wir benutzt haben:
 
 #table(
-  columns: (auto, 1fr, auto),
+  columns: (auto, auto, auto),
   thead[Werkzeug][Zweck][Phase],
-
-  table.cell(colspan: 3, fill: luma(238))[*Sicherung (Secure)*],
   [Qemu.img.exe], [Forensisch sichere Datenträgerabbilder (`.dd`) inkl. Hashwertbildung], [Secure],
   [WinPmem], [RAM-Sicherung des Windows-Clients], [Secure],
   [LiME], [RAM-Sicherung des Linux-Servers (Kernel-Modul)], [Secure],
@@ -125,26 +122,24 @@ Hier gelistet sind Beispiele von Tools, die benutzt haben.
 
 === Forensische Grundsätze
 
-Der Untersuchung liegen die folgenden, in der Vorlesung vermittelten Grundsätze
-zugrunde. Ihre Einhaltung ist Voraussetzung für die Verwertbarkeit der Befunde.
+Die Untersuchung folgt den allgemein anerkannten Grundsätzen der digitalen Forensik:
 
 - *Keine Veränderung am Original.* Originaldatenträger werden ausschließlich
   schreibgeschützt behandelt (Write-Blocker bzw. read-only-Mount). Sämtliche
   Analysen erfolgen auf Arbeitskopien.
 - *Integritätssicherung durch Hashwerte.* Für jedes Asservat wird bei der
-  Sicherung ein kryptografischer Hash (SHA-256, ergänzend SHA-1) gebildet und vor
+  Sicherung ein kryptografischer Hash (SHA-256) gebildet und vor
   jeder Analyse erneut verifiziert. Eine Abweichung würde eine Manipulation
   anzeigen.
 - *Chain of Custody.* Jeder Besitz- und Bearbeitungsübergang eines Asservats wird
   lückenlos protokolliert (wer, wann, was, womit).
-- *Nachvollziehbarkeit und Reproduzierbarkeit (E3).* Jeder Befund nennt den exakt
+- *Nachvollziehbarkeit und Reproduzierbarkeit.* Jeder Befund nennt den
   ausgeführten Befehl, den zugehörigen Beweis, dessen Interpretation und die
-  Quelldatei. Ein Dritter muss den Befund mit denselben Mitteln unabhängig
-  reproduzieren können.
+  Quelldatei. Dies ermöglicht Dritten, die Befunde zu reproduzieren und zu validieren.
 - *Vier-Augen-Prinzip / Objektivität.* Befunde werden wertneutral erhoben; auch
   ergebnislose oder entlastende Prüfungen werden dokumentiert.
 - *Abgrenzung der Ermittlerartefakte.* Spuren, die erst durch die Sicherung
-  selbst entstehen (FTK Imager, WinPmem, Velociraptor, Npcap), werden klar von den
+  selbst entstehen (Qemu.img.exe, WinPmem, Velociraptor, Npcap), werden klar von den
   Täterspuren getrennt ausgewiesen.
 - *Locard'sches Prinzip.* Jede Interaktion hinterlässt Spuren — Grundlage dafür,
   dass die Täterhandlungen über mehrere unabhängige Artefaktquellen belegbar sind.
@@ -184,7 +179,7 @@ Mitschnitt).
 === Systemübersicht
 
 #table(
-  columns: (auto, auto, 1fr, auto),
+  columns: (auto, auto, auto, auto),
   thead[Hostname][IP][Betriebssystem][Rolle],
   [kali], [192.168.50.10], [Kali Linux], [Angreifer],
   [projektserver], [192.168.50.20], [Ubuntu 24.04 LTS (Server)], [Projektserver (Ziel)],

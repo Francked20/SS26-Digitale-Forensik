@@ -26,18 +26,21 @@ in `pwlog.txt` (F-WIN-06). Speicherresident waren die zugehörigen
 Datei- und Prozessartefakte im Client-RAM noch nachweisbar (F-RAM-03).
 
 *3. Lateral Movement — RDP zum Client.*
-Der Angreifer (192.168.50.10) baute eine RDP-Sitzung zum Client
-(192.168.50.30) auf; der Benutzername `vogel` wurde im RDP-Cookie
-(`mstshash=vogel`) im Klartext übertragen (Netzwerk-Finding 1). Auf dem
-Desktop lagen die Serverzugangsdaten `m.vogel:Werkzeug#2026` doppelt offen —
+Mit den erbeuteten Windows-Anmeldedaten (`vogel/admin`, F-WIN-06) baute der
+Angreifer (192.168.50.10) eine RDP-Sitzung zum Client (192.168.50.30) auf;
+der Benutzername `vogel` wurde im RDP-Cookie (`mstshash=vogel`) im Klartext
+übertragen (Netzwerk-Finding 1). Auf dem Desktop lagen zusätzlich die davon
+verschiedenen *Serverzugangsdaten* `m.vogel:Werkzeug#2026` doppelt offen —
 als `credentials.txt` und in `logins.json` von Firefox (F-WIN-06).
 
 *4. Server-Kompromittierung & Exfiltration (Server).*
 Mit den erbeuteten Serverzugangsdaten meldete sich der Angreifer per SSH am
 Projektserver (192.168.50.20) an — zwei Logins am 05.07.2026 ab 00:24:35 UTC
 (Netzwerk-Findings 2/3; `auth.log`, B003-SERVER-SQ-2026). Innerhalb der
-ersten Sitzung (233 s) wurden ca. 1 MB Daten zum Angreifer exfiltriert; die
-Datenrichtung und das Volumen belegen den Diebstahl trotz SSH-Verschlüsselung.
+ersten Sitzung (233 s, bis ~00:28:28) wurden ca. 1 MB Daten zum Angreifer
+exfiltriert; die zweite, nur 6 s kurze Sitzung (Login 00:26:53) läuft
+*parallel* zur noch offenen ersten und zeigt keine Exfiltration. Datenrichtung
+und Volumen belegen den Diebstahl trotz SSH-Verschlüsselung.
 
 *5. Sabotage & Anti-Forensik (Server).*
 Der Angreifer löschte die Projektdaten (`rm -rf`, B004-SERVER-SQ-2026) und

@@ -1,5 +1,12 @@
 = Detaillierte Rekonstruktion des Angriffs (Attack Lifecycle)
 
+Dieser Abschnitt fasst den *aus den Einzelbefunden rekonstruierten* Angriffsverlauf
+zusammenhängend zusammen. Er nimmt keine neue Beweisführung vor, sondern
+verdichtet die in den Analysekapiteln (Netzwerk, Server, Client, RAM,
+Datenträger) belegten und in @kap-present korrelierten Befunde zu einer
+narrativen Gesamtschau. Die zugrunde liegenden Belege und Finding-IDs finden
+sich in den jeweiligen Fachkapiteln.
+
 == Phase 1: Initialer Zugriff über Spear-Phishing
 
 Der Angriff begann mit einer gezielten Phishing-E-Mail (Spear-Phishing) an den Mitarbeiter *Markus Vogel* (`m.vogel@bayern-praezision.de`).
